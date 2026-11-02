@@ -1,9 +1,161 @@
-ID,Username,Email,Saldo,Investido,Lucro,Trades,Cadastro,Status
-ZP001,carlos_agro,carlos.silva@gmail.com,15420,8000,7420,47,2024-12-10,ativo
-ZP002,ana_fazenda,ana.oliveira@hotmail.com,3200,5000,-1800,12,2025-01-03,ativo
-ZP003,roberto_trade,roberto.trader@outlook.com,48900,20000,28900,128,2024-11-22,ativo
-ZP004,juliana_cafe,juliana.cafe.agro@gmail.com,1000,1000,0,1,2025-01-15,ativo
-ZP005,marcos_arroz,marcos.arrozal@yahoo.com.br,0,3500,-3500,8,2025-01-08,bloqueado
-ZP006,fernanda_soja,fernanda.soja.agro@gmail.com,22300,10000,12300,62,2024-12-28,ativo
-ZP007,lucas_milho,lucas.milho22@gmail.com,7500,5000,2500,19,2025-01-12,ativo
-ZP008,patricia_feijao,patricia.feijao@uol.com.br,1200,2000,-800,5,2025-01-14,ativo
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZP Admin - Painel</title>
+<style>
+body{background:#05070a;color:#fff;font-family:Space Grotesk,sans-serif;padding:12px}
+.card{background:#0a0e14;border:1px solid #1f2937;border-radius:12px;padding:12px;margin:8px 0}
+.btn{border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
+.btn-gold{background:#facc15;color:#000}.btn-green{background:#00c950;color:#fff}.btn-red{background:#dc2626;color:#fff}
+.input{background:#05070a;border:1px solid #374151;border-radius:8px;padding:8px 10px;color:#fff;width:100%;margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th,td{border:1px solid #1f2937;padding:6px;text-align:left}
+th{background:#0f1419;color:#facc15}
+</style>
+</head>
+<body>
+<h2>⚙️ ZP Agro - Admin Panel</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <div class="card" style="flex:1;min-width:160px"><div>Usuários</div><b id="statUsers">-</b></div>
+  <div class="card" style="flex:1;min-width:160px"><div>Trades</div><b id="statTrades">-</b></div>
+  <div class="card" style="flex:1;min-width:160px"><div>Saques Pendentes</div><b id="statPend">-</b></div>
+  <div class="card" style="flex:1;min-width:160px"><div>Volume ZP$</div><b id="statVol">-</b></div>
+</div>
+
+<div class="card">
+  <h3>💰 Bônus Iniciante</h3>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">
+    <button class="btn btn-gold" onclick="setBonus(500)">500 ZP$</button>
+    <button class="btn btn-gold" onclick="setBonus(1000)">1000 ZP$</button>
+    <button class="btn btn-gold" onclick="setBonus(5000)">5000 ZP$</button>
+    <button class="btn btn-gold" onclick="setBonus(10000)">10000 ZP$</button>
+  </div>
+  <div>Bônus atual: <b id="bonusAtual">-</b></div>
+</div>
+
+<div class="card">
+  <h3>📤 Saques Pix (com nome e chave Pix)</h3>
+  <button class="btn btn-green" onclick="loadWithdrawals()">Atualizar Saques</button>
+  <div style="overflow:auto;margin-top:8px"><table id="tblWithdrawals"><tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo Pix</th><th>Chave Pix</th><th>ZP$</th><th>R$</th><th>Status</th><th>Ação</th></tr></table></div>
+</div>
+
+<div class="card">
+  <h3>📊 Transações (com email)</h3>
+  <button class="btn btn-green" onclick="loadTransactions()">Atualizar Transações</button>
+  <div style="overflow:auto;margin-top:8px"><table id="tblTransactions"><tr><th>Data</th><th>Email</th><th>Usuário</th><th>Commodity</th><th>Tipo</th><th>Preço ZP$</th><th>Fee</th></tr></table></div>
+</div>
+
+<div class="card">
+  <h3>👥 Usuários (email + saldo)</h3>
+  <button class="btn btn-green" onclick="loadUsers()">Atualizar Usuários</button>
+  <div style="overflow:auto;margin-top:8px"><table id="tblUsers"><tr><th>Email</th><th>Username</th><th>Saldo ZP$</th><th>Ação</th></tr></table></div>
+</div>
+
+<script>
+async function apiGet(path){
+  const r=await fetch(path);
+  const d=await r.json();
+  if(!r.ok) throw new Error(d.error||'Erro');
+  return d;
+}
+async function apiPost(path, body){
+  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json();
+  if(!r.ok) throw new Error(d.error||'Erro');
+  return d;
+}
+async function loadStats(){
+  try{
+    const d=await apiGet('/api/admin/stats');
+    document.getElementById('statUsers').textContent=d.stats.users;
+    document.getElementById('statTrades').textContent=d.stats.trades;
+    document.getElementById('statPend').textContent=d.stats.pending_withdrawals+' (ZP$ '+d.stats.pending_amount_zp+')';
+    document.getElementById('statVol').textContent='ZP$ '+d.stats.volume_zp;
+  }catch(e){console.log(e)}
+}
+async function loadBonus(){
+  try{
+    const d=await apiGet('/api/admin/config');
+    const b=d.config.find(c=>c.key==='bonus_iniciante');
+    if(b) document.getElementById('bonusAtual').textContent='ZP$ '+b.value;
+  }catch{}
+}
+async function setBonus(v){
+  await apiPost('/api/admin/config',{key:'bonus_iniciante', value:''+v});
+  alert('Bônus iniciante agora ZP$ '+v);
+  loadBonus();
+}
+async function loadWithdrawals(){
+  try{
+    const d=await apiGet('/api/admin/withdrawals');
+    const tbl=document.getElementById('tblWithdrawals');
+    tbl.innerHTML='<tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo Pix</th><th>Chave Pix</th><th>ZP$</th><th>R$</th><th>Status</th><th>Ação</th></tr>';
+    (d.withdrawals||[]).forEach(w=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${w.created_at||''}</td><td>${w.name||''}</td><td>${w.email||''}</td><td>${w.pix_type||''}</td><td style="color:#facc15">${w.pix_key||''}</td><td>${w.amount_zp||''}</td><td>R$ ${w.amount_brl||''}</td><td>${w.status||''}</td><td><button class="btn btn-green" onclick="aprovarSaque('${w.id}','pago')">Pago</button></td>`;
+      tbl.appendChild(tr);
+    });
+  }catch(e){alert('Erro saques: '+e.message)}
+}
+async function aprovarSaque(id,status){
+  await apiPost('/api/admin/withdrawals/approve',{id,status});
+  alert('Saque '+status);
+  loadWithdrawals();
+}
+async function loadTransactions(){
+  try{
+    const d=await apiGet('/api/admin/transactions');
+    const tbl=document.getElementById('tblTransactions');
+    tbl.innerHTML='<tr><th>Data</th><th>Email</th><th>Usuário</th><th>Commodity</th><th>Tipo</th><th>Preço ZP$</th><th>Fee</th></tr>';
+    (d.transactions||d.trades||[]).forEach(t=>{
+      const tr=document.createElement('tr');
+      const color=t.type==='BUY'?'#00c950':'#dc2626';
+      tr.innerHTML=`<td>${t.created_at||''}</td><td>${t.email||''}</td><td>${t.username||''}</td><td>${t.commodity||''}</td><td style="color:${color}">${t.type||''}</td><td>ZP$ ${t.price_zp||''}</td><td>ZP$ ${t.fee_zp||''}</td>`;
+      tbl.appendChild(tr);
+    });
+  }catch(e){alert('Erro transacoes: '+e.message)}
+}
+async function loadUsers(){
+  try{
+    const d=await apiGet('/api/admin/users');
+    const tbl=document.getElementById('tblUsers');
+    tbl.innerHTML='<tr><th>Email</th><th>Username</th><th>Saldo ZP$</th><th>Ação</th></tr>';
+    (d.users||[]).forEach(u=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${u.email||''}</td><td>${u.username||''}</td><td>ZP$ ${u.cash_zp||0}</td><td><button class="btn btn-red" onclick="bloquear('${u.id}')">Bloquear</button></td>`;
+      tbl.appendChild(tr);
+    });
+  }catch(e){alert('Erro users: '+e.message)}
+}
+async function bloquear(user_id){
+  if(!confirm('Bloquear usuário?')) return;
+  await apiPost('/api/admin/users',{user_id, action:'block'});
+  alert('Bloqueado');
+  loadUsers();
+}
+loadStats(); loadBonus(); loadWithdrawals(); loadTransactions(); loadUsers();
+</script>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
