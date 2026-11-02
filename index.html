@@ -185,7 +185,9 @@ function upd(){
   document.getElementById('lucroAtivo').textContent=sel;
   document.getElementById('investido').innerHTML='INVESTIDO<br>'+sacas+' sacas • Comprado por ZP$ '+avg.toFixed(2)+' • '+sel;
   const lucro=sacas>0?(now-avg)*sacas:0;
-  document.getElementById('lucro').textContent=(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2).replace('.',',');
+  const lucroEl=document.getElementById('lucro');
+  lucroEl.textContent=(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2).replace('.',',');
+  lucroEl.style.color=lucro>=0?'#00c950':'#ef4444';
   document.getElementById('precoTop').textContent='ZP$ '+now.toFixed(2);
   document.getElementById('buyBtn').innerHTML='COMPRAR '+sel+'<br><span style="font-size:11px;opacity:.9">ZP$ '+now.toFixed(2)+' • Qty 1 • fee ZP$ 0.48</span>';
   document.getElementById('sellBtn').innerHTML='VENDER '+sel+'<br><span style="font-size:11px;opacity:.9">ZP$ '+now.toFixed(2)+' • Qty 1 • fee ZP$ 0.48</span>';
@@ -260,7 +262,85 @@ async function pedirSaque(){
   const t=localStorage.getItem('zp_token'); if(!t) return alert('Faça login');
   try{const r=await fetch('/api/withdrawals',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({name:nome,pix_type:tipo,pix_key:chave,amount_zp:valor})});const d=await r.json(); alert('Saque ZP$ '+valor+' = R$ '+(valor*0.01).toFixed(2)+' enviado pro admin!'); document.getElementById('carteiraModal').classList.remove('open');}catch(e){alert(e.message)}
 }
-function comprarCredito(zp,brl){ alert('Pix de R$ '+brl+' para comprar '+zp+' ZP$ - copia e cola: 000201... (integração Pix aqui)'); }
+
+async function comprarCredito(zp, brl){
+  const token = localStorage.getItem('zp_token');
+  if(!token) return alert('Faça login primeiro! Clique em MINHA CONTA');
+  
+  // Mostra loading
+  const modal = document.getElementById('creditoModal');
+  modal.innerHTML = `<div class="box"><h3 style="color:#facc15">Gerando Pix...</h3><div style="text-align:center;padding:20px">⏳ Criando Pix de R$ ${brl} para ${zp} ZP$...</div></div>`;
+  
+  try{
+    const res = await fetch('/api/credits/create-pix', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'Authorization':'Bearer '+token},
+      body: JSON.stringify({amount_zp: zp})
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Erro');
+    
+    // Mostra QR Code
+    let qrImg = '';
+    if(data.pix_qr_base64){
+      qrImg = `<img src="data:image/png;base64,${data.pix_qr_base64}" style="width:200px;height:200px;margin:10px auto;display:block;border:8px solid #fff;border-radius:12px">`;
+    }
+    
+    let aviso = '';
+    if(data.mode==='teste'){
+      aviso = `<div style="background:rgba(250,204,21,0.15);border:1px solid #facc15;border-radius:8px;padding:8px;margin:8px 0;font-size:11px">⚠️ MODO TESTE: Configure MP_ACCESS_TOKEN no Cloudflare para Pix real. Clique em APROVAR TESTE para testar crédito automático!</div><button onclick="aprovarTeste('${data.order_id}')" style="width:100%;height:40px;background:#00c950;color:#fff;border:none;border-radius:8px;font-weight:700;margin:6px 0">✅ APROVAR TESTE (credita ${zp} ZP$ na hora)</button>`;
+    }
+    
+    modal.innerHTML = `
+      <div class="box" style="max-width:380px">
+        <div style="display:flex;justify-content:space-between"><h3 style="color:#facc15">💳 Pix de R$ ${data.amount_brl||brl} = ${zp} ZP$</h3><button onclick="this.closest('.modal').classList.remove('open')" style="background:none;border:none;color:#9ca3af;font-size:20px">✕</button></div>
+        ${aviso}
+        ${qrImg}
+        <div style="background:#05070a;border:1px solid #374151;border-radius:8px;padding:10px;margin:10px 0">
+          <div style="font-size:10px;color:#9ca3af">PIX COPIA E COLA:</div>
+          <div id="pixCode" style="font-size:10px;word-break:break-all;background:#0a0e14;padding:8px;border-radius:6px;margin:6px 0;max-height:60px;overflow:auto">${data.pix_code||'Gerando...'}</div>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('pixCode').textContent);alert('Pix copiado!')" style="width:100%;height:36px;background:#facc15;color:#000;border:none;border-radius:8px;font-weight:700">📋 COPIAR PIX COPIA E COLA</button>
+        </div>
+        <div style="font-size:11px;color:#9ca3af;text-align:center">Pague no app do banco e o saldo cai na hora! Depois clique em VERIFICAR PAGAMENTO</div>
+        <button onclick="verificarPagamento('${data.order_id}')" style="width:100%;height:44px;background:#00c950;color:#fff;border:none;border-radius:10px;font-weight:700;margin-top:8px">🔄 VERIFICAR PAGAMENTO</button>
+        <div id="statusPix" style="text-align:center;margin-top:8px;font-size:12px;color:#9ca3af"></div>
+      </div>
+    `;
+  }catch(e){
+    modal.innerHTML = `<div class="box"><h3 style="color:#dc2626">Erro: ${e.message}</h3><button onclick="document.getElementById('creditoModal').classList.remove('open')" style="width:100%;height:40px;background:#1f2937;color:#fff;border:none;border-radius:8px;margin-top:8px">Fechar</button></div>`;
+  }
+}
+
+async function verificarPagamento(orderId){
+  const token = localStorage.getItem('zp_token');
+  const statusEl = document.getElementById('statusPix');
+  if(statusEl) statusEl.textContent = 'Verificando...';
+  try{
+    const res = await fetch('/api/credits/status?order_id='+orderId, {headers:{Authorization:'Bearer '+token}});
+    const data = await res.json();
+    if(data.status==='pago' || data.status==='pago_teste'){
+      if(statusEl) statusEl.innerHTML = '<span style="color:#00c950">✅ PAGO! '+data.amount_zp+' ZP$ creditados! Novo saldo: ZP$ '+data.cash_zp+'</span>';
+      if(typeof carregarDoBanco==='function') await carregarDoBanco();
+      if(typeof upd==='function') upd();
+      setTimeout(()=>{ document.getElementById('creditoModal').classList.remove('open'); location.reload(); }, 2000);
+    } else {
+      if(statusEl) statusEl.textContent = 'Status: '+data.status+' - ainda não pago. Pague o Pix e clique novamente.';
+    }
+  }catch(e){
+    if(statusEl) statusEl.textContent = 'Erro: '+e.message;
+  }
+}
+
+async function aprovarTeste(orderId){
+  const token = localStorage.getItem('zp_token');
+  try{
+    const res = await fetch('/api/credits/status?order_id='+orderId+'&aprovar_teste=1', {headers:{Authorization:'Bearer '+token}});
+    const data = await res.json();
+    alert('Teste aprovado! '+data.amount_zp+' ZP$ creditados! Novo saldo ZP$ '+data.cash_zp);
+    location.reload();
+  }catch(e){ alert(e.message); }
+}
+
 upd(); setTimeout(carregarDoBanco,800);
 </script>
 </body>
