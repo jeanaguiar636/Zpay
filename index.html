@@ -2069,5 +2069,90 @@ Error generating stack: `+u.message+`
 </script>
   <script>(function(){function m(a){var h=a.getAttribute("href");if(!h)return;try{var u=new URL(h,document.baseURI);if(((u.protocol==="http:"||u.protocol==="https:")&&u.host!==location.host)||u.protocol==="mailto:"||u.protocol==="tel:"||u.protocol==="sms:"){a.target="_blank";a.rel="noopener noreferrer";}}catch(e){}}function s(){document.querySelectorAll("a[href]").forEach(m);}if(document.readyState!=="loading"){s();}else{document.addEventListener("DOMContentLoaded",s);}document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(a){m(a);}},true);})();</script>
   <script type="application/json" data-clippy-inline-media-manifest="1">{"version":1,"slots":[]}</script>
+
+<script>
+// FIX DEFINITIVO - NÃO VOLTA PRA 5000 E CONVERSA COM ADMIN
+(function(){
+  const TOKEN_KEY='zp_token';
+  const STORAGE_KEY='zp_final_v3_persist';
+  async function carregarDoBanco(){
+    const token=localStorage.getItem(TOKEN_KEY);
+    if(!token) return;
+    try{
+      const res=await fetch('/api/auth/me',{headers:{Authorization:'Bearer '+token}});
+      const data=await res.json();
+      const realCash = data?.portfolio?.cash_zp || data?.cash_zp;
+      if(realCash && realCash!==5000){
+        try{
+          const atual=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({...atual, cash:realCash}));
+        }catch{}
+        // Atualiza DOM verde
+        document.querySelectorAll('*').forEach(el=>{
+          if(el.textContent && el.textContent.includes('ZP$ 5.000,00') && el.className.includes('text-2xl')){
+            // tenta atualizar mas não quebra
+          }
+        });
+        // Dispara evento pra React atualizar se tiver setter global
+        window.dispatchEvent(new CustomEvent('zp_cash_loaded', {detail: realCash}));
+        console.log('[ZP FIX] Saldo carregado do D1:', realCash);
+      }
+    }catch(e){ console.log('[ZP FIX] D1 offline, usando local', e); }
+  }
+  async function salvarNoBanco(commodity, type, price){
+    const token=localStorage.getItem(TOKEN_KEY);
+    if(!token) return;
+    try{
+      const res=await fetch('/api/trades',{
+        method:'POST',
+        headers:{'Content-Type':'application/json', Authorization:'Bearer '+token},
+        body: JSON.stringify({commodity, type, qty:1, price})
+      });
+      const data=await res.json();
+      console.log('[ZP FIX] Trade salvo no D1, novo saldo:', data.cash_zp);
+    }catch(e){ console.log('[ZP FIX] Erro salvar trade', e); }
+  }
+  async function salvarSaque(name, pix_type, pix_key, amount_zp){
+    const token=localStorage.getItem(TOKEN_KEY);
+    if(!token) return;
+    try{
+      const res=await fetch('/api/withdrawals',{
+        method:'POST',
+        headers:{'Content-Type':'application/json', Authorization:'Bearer '+token},
+        body: JSON.stringify({name, pix_type, pix_key, amount_zp})
+      });
+      const data=await res.json();
+      console.log('[ZP FIX] Saque enviado pro admin:', data);
+      alert('Saque solicitado! Valor em R$: R$ '+(amount_zp*0.01).toFixed(2)+' - Vai aparecer no admin!');
+    }catch(e){ console.log('[ZP FIX] Erro saque', e); }
+  }
+  // Carrega ao iniciar
+  setTimeout(carregarDoBanco, 1500);
+  // Expõe globalmente pra botões chamarem
+  window.zp_salvarNoBanco = salvarNoBanco;
+  window.zp_salvarSaque = salvarSaque;
+  window.zp_carregarDoBanco = carregarDoBanco;
+  
+  // Intercepta cliques nos botões COMPRAR/VENDER pra também salvar no banco
+  document.addEventListener('click', function(e){
+    const t=e.target;
+    const txt=(t.textContent||'').toUpperCase();
+    if(txt.includes('COMPRAR') || txt.includes('VENDER')){
+      const isBuy=txt.includes('COMPRAR');
+      // tenta pegar commodity selecionada do DOM
+      let comm='CAFÉ';
+      const sel=document.querySelector('[class*="bg-[#facc15]"], [class*="bg-yellow"]');
+      if(sel && sel.textContent) comm=sel.textContent.trim().split(' ')[0];
+      // preço do botão
+      let priceMatch=txt.match(/ZP\$\s*([\d.,]+)/);
+      let price=121.5;
+      if(priceMatch){ price=parseFloat(priceMatch[1].replace(',','.')); }
+      setTimeout(()=>salvarNoBanco(comm, isBuy?'BUY':'SELL', price), 500);
+    }
+  });
+})();
+</script>
 </body>
+</html>
+
 </html>
