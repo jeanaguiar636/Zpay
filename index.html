@@ -236,10 +236,23 @@ async function cadastrar(){
   }catch(e){alert(e.message)}
 }
 async function login(){
-  const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value, nome=document.getElementById('loginNome').value||email.split('@')[0];
+  const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value;
   if(!email||!pass) return alert('Email e senha');
-  try{let r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});let d=await r.json();if(!r.ok){ r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:nome,email,password:pass})}); d=await r.json(); } if(d.token){ localStorage.setItem('zp_token',d.token); await carregarDoBanco(); alert('Logado como '+nome+'! Saldo onde parou: ZP$ '+cash); document.getElementById('contaModal').classList.remove('open'); } else alert(d.error||'Erro');}catch(e){alert(e.message)}
+  try{
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d=await r.json();
+    if(r.ok && d.token){
+      localStorage.setItem('zp_token',d.token);
+      await carregarDoBanco();
+      alert('Logado! Bem-vindo '+(d.user?.username||email)+'! Saldo: ZP$ '+cash);
+      document.getElementById('contaModal').classList.remove('open');
+      location.reload();
+    } else {
+      alert(d.error||'Erro login');
+    }
+  }catch(e){alert('Erro: '+e.message)}
 }
+
 function logout(){ localStorage.removeItem('zp_token'); location.reload(); }
 async function pedirSaque(){
   const nome=document.getElementById('pixNome').value, tipo=document.getElementById('pixTipo').value, chave=document.getElementById('pixChave').value, valor=parseFloat(document.getElementById('pixValor').value);
