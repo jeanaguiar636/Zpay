@@ -73,7 +73,11 @@ body{background:#05070a;color:#fff;font-family:'Space Grotesk',sans-serif;min-he
   <button class="btn-buy" id="buyBtn">COMPRAR CAFÉ<br><span style="font-size:11px;opacity:.9">ZP$ 121,97 • Qty 1 • fee ZP$ 0.48</span></button>
   <button class="btn-sell" id="sellBtn">VENDER CAFÉ<br><span style="font-size:11px;opacity:.9">ZP$ 121,97 • Qty 1 • fee ZP$ 0.48</span></button>
 </div>
-<button class="btn-wallet" onclick="document.getElementById('carteiraModal').classList.add('open')">↗ RESGATAR PARA CARTEIRA &nbsp;&nbsp; ■ PARAR NEGOCIAÇÃO</button>
+<div style="display:flex;gap:8px;margin-top:8px">
+  <button class="btn-wallet" style="flex:1" onclick="resgatarParaCarteira()">↗ RESGATAR PARA CARTEIRA</button>
+  <button class="btn-wallet" id="btnParar" style="flex:1;background:#1f2937;border:1px solid #374151" onclick="pararNegociacao()">■ PARAR NEGOCIAÇÃO</button>
+</div>
+<button class="btn-wallet" style="margin-top:8px" onclick="document.getElementById('carteiraModal').classList.add('open')">💰 SAQUE PIX • CARTEIRA</button>
 
 <!-- MODAL MINHA CONTA - COM NOME + SAIR + LOGIN VISÍVEL -->
 <div class="modal" id="contaModal"><div class="box">
@@ -215,7 +219,42 @@ const track=document.getElementById('track');let th='';for(let i=0;i<6;i++){for(
 // Chart
 const cvs=document.getElementById('chart'),ctx=cvs.getContext('2d');let hist=[];for(let i=0;i<30;i++) hist.push(now*(0.98+Math.random()*0.04));
 function draw(){ctx.clearRect(0,0,400,130);const min=Math.min(...hist),max=Math.max(...hist);ctx.beginPath();ctx.moveTo(0,130-(hist[0]-min)/(max-min||1)*110);hist.forEach((p,i)=>ctx.lineTo(i/30*400,130-(p-min)/(max-min||1)*110));ctx.strokeStyle='#00c950';ctx.lineWidth=2;ctx.stroke();ctx.lineTo(400,130);ctx.lineTo(0,130);ctx.closePath();ctx.fillStyle='rgba(0,201,80,0.2)';ctx.fill();}draw();
-setInterval(()=>{now*=1+(Math.random()-0.5)*0.012;hist.push(now);if(hist.length>30)hist.shift();PRICES[sel]=now;upd();draw();},4000);
+let negociando=true;
+let intervalo=setInterval(()=>{if(!negociando) return; now*=1+(Math.random()-0.5)*0.012;hist.push(now);if(hist.length>30)hist.shift();PRICES[sel]=now;upd();draw();},4000);
+
+function resgatarParaCarteira(){
+  if(sacas<=0) return alert('Nada investido para resgatar! Você já está com tudo na carteira.');
+  const totalVenda = now * sacas - 0.48;
+  const lucroAtual = (now - avg) * sacas;
+  if(confirm(`Resgatar ${sacas} sacas de ${sel} por ZP$ ${totalVenda.toFixed(2)}? Lucro: ${lucroAtual>=0?'+':''}ZP$ ${lucroAtual.toFixed(2)}`)){
+    cash+=totalVenda;
+    // Registra venda no banco
+    for(let i=0;i<sacas;i++){ salvarNoBanco(sel,'SELL',now); }
+    sacas=0; invest=0; avg=0;
+    upd();
+    alert('Resgatado! ZP$ '+totalVenda.toFixed(2)+' voltou pra carteira!');
+  }
+}
+
+function pararNegociacao(){
+  const btn=document.getElementById('btnParar');
+  if(negociando){
+    negociando=false;
+    clearInterval(intervalo);
+    btn.textContent='▶ RESUMIR NEGOCIAÇÃO';
+    btn.style.background='#00c950';
+    btn.style.color='#fff';
+    alert('Negociação PARADA! Gráfico parou e você não opera mais sozinho. Clique em RESUMIR para voltar.');
+  }else{
+    negociando=true;
+    intervalo=setInterval(()=>{if(!negociando) return; now*=1+(Math.random()-0.5)*0.012;hist.push(now);if(hist.length>30)hist.shift();PRICES[sel]=now;upd();draw();},4000);
+    btn.textContent='■ PARAR NEGOCIAÇÃO';
+    btn.style.background='#1f2937';
+    btn.style.color='#fff';
+    alert('Negociação RESUMIDA! Gráfico voltou a andar!');
+  }
+}
+
 // Musica
 const audio=document.getElementById('audio');audio.volume=0.3;document.getElementById('musicBtn').onclick=()=>{if(audio.paused) audio.play(); else audio.pause();};
 // BANCO
