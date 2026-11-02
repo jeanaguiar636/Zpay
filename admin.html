@@ -23,25 +23,70 @@
 }
 </style>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZP Admin - Painel</title>
+<title>ZP Admin - Painel Completo</title>
 <style>
 body{background:#05070a;color:#fff;font-family:Space Grotesk,sans-serif;padding:12px}
 .card{background:#0a0e14;border:1px solid #1f2937;border-radius:12px;padding:12px;margin:8px 0}
 .btn{border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
-.btn-gold{background:#facc15;color:#000}.btn-green{background:#00c950;color:#fff}.btn-red{background:#dc2626;color:#fff}
+.btn-gold{background:#facc15;color:#000}.btn-green{background:#00c950;color:#fff}.btn-red{background:#dc2626;color:#fff}.btn-blue{background:#3b82f6;color:#fff}
 .input{background:#05070a;border:1px solid #374151;border-radius:8px;padding:8px 10px;color:#fff;width:100%;margin:4px 0}
+select.input{height:36px}
 table{width:100%;border-collapse:collapse;font-size:11px}
 th,td{border:1px solid #1f2937;padding:6px;text-align:left}
 th{background:#0f1419;color:#facc15}
+.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700}
 </style>
 </head>
 <body>
-<h2>⚙️ ZP Agro - Admin Panel</h2>
+<h2>⚙️ ZP Agro - Admin Panel Completo</h2>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
   <div class="card" style="flex:1;min-width:160px"><div>Usuários</div><b id="statUsers">-</b></div>
   <div class="card" style="flex:1;min-width:160px"><div>Trades</div><b id="statTrades">-</b></div>
   <div class="card" style="flex:1;min-width:160px"><div>Saques Pendentes</div><b id="statPend">-</b></div>
   <div class="card" style="flex:1;min-width:160px"><div>Volume ZP$</div><b id="statVol">-</b></div>
+</div>
+
+<div class="card" style="border:2px solid #00c950;background:linear-gradient(135deg,#0a0e14,#0f1f0f)">
+  <h3>🎁 Doação de Créditos - Dar ZP$ para Usuários</h3>
+  <div style="font-size:11px;color:#9ca3af;margin-bottom:8px">Escolha um usuário e doe ZP$ - cai na hora na carteira dele!</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <select id="doacaoUser" class="input" style="flex:2;min-width:200px"><option>Carregando usuários...</option></select>
+    <input id="doacaoValor" class="input" type="number" placeholder="Qtd ZP$ ex: 500" style="flex:1;min-width:120px">
+    <input id="doacaoMotivo" class="input" placeholder="Motivo: Bônus, prêmio..." style="flex:1;min-width:150px">
+    <button class="btn btn-green" onclick="doarCredito()" style="height:36px">🎁 DOAR ZP$</button>
+  </div>
+  <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=200">+200 ZP$ (R$2)</button>
+    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=500">+500 ZP$ (R$5)</button>
+    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=1000">+1000 ZP$ (R$10)</button>
+    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=5000">+5000 ZP$ (R$50)</button>
+    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=10000">+10000 ZP$ (R$100)</button>
+  </div>
+  <div id="doacaoStatus" style="font-size:11px;margin-top:8px;color:#00c950"></div>
+</div>
+
+<div class="card" style="border:2px solid #facc15">
+  <h3>💳 Pacotes de ZP$ - Editar Valores de Compra (R$2 a R$100)</h3>
+  <div style="font-size:11px;color:#9ca3af;margin-bottom:8px">Crie e edite pacotes que aparecem em COMPRAR CRÉDITO. Usuário compra de R$2 a R$100!</div>
+  <button class="btn btn-blue" onclick="loadPackages()">🔄 Atualizar Pacotes</button>
+  <button class="btn btn-green" onclick="criarPacote()">➕ Novo Pacote</button>
+  <div style="overflow:auto;margin-top:8px"><table id="tblPackages"><tr><th>Label</th><th>ZP$</th><th>R$</th><th>Ativo</th><th>Ação</th></tr></table></div>
+  <div style="margin-top:10px;padding:10px;background:#05070a;border-radius:8px">
+    <div style="font-size:11px;font-weight:700;margin-bottom:6px">Adicionar/Editar Pacote Rápido:</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <input id="pkgLabel" class="input" placeholder="Ex: 200 ZP$ - Teste" style="flex:2">
+      <input id="pkgZp" class="input" type="number" placeholder="ZP$ ex: 200" style="flex:1">
+      <input id="pkgBrl" class="input" type="number" placeholder="R$ ex: 2" style="flex:1">
+      <button class="btn btn-gold" onclick="salvarPacoteRapido()">💾 Salvar Pacote</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <button class="btn btn-green" onclick="setPacote(200,2,'200 ZP$ - Teste')">R$2 = 200 ZP$</button>
+      <button class="btn btn-green" onclick="setPacote(500,5,'500 ZP$ - Iniciante')">R$5 = 500 ZP$</button>
+      <button class="btn btn-gold" onclick="setPacote(1000,10,'1.000 ZP$')">R$10 = 1000 ZP$</button>
+      <button class="btn btn-gold" onclick="setPacote(5000,50,'5.000 ZP$')">R$50 = 5000 ZP$</button>
+      <button class="btn btn-gold" onclick="setPacote(10000,100,'10.000 ZP$ Premium')">R$100 = 10000 ZP$</button>
+    </div>
+  </div>
 </div>
 
 <div class="card">
@@ -62,13 +107,19 @@ th{background:#0f1419;color:#facc15}
 </div>
 
 <div class="card">
+  <h3>🎁 Histórico de Doações</h3>
+  <button class="btn btn-green" onclick="loadDonations()">Atualizar Doações</button>
+  <div style="overflow:auto;margin-top:8px"><table id="tblDonations"><tr><th>Data</th><th>Email</th><th>ZP$</th><th>Motivo</th></tr></table></div>
+</div>
+
+<div class="card">
   <h3>📊 Transações (com email)</h3>
   <button class="btn btn-green" onclick="loadTransactions()">Atualizar Transações</button>
   <div style="overflow:auto;margin-top:8px"><table id="tblTransactions"><tr><th>Data</th><th>Email</th><th>Usuário</th><th>Commodity</th><th>Tipo</th><th>Preço ZP$</th><th>Fee</th></tr></table></div>
 </div>
 
 <div class="card">
-  <h3>👥 Usuários (email + saldo)</h3>
+  <h3>👥 Usuários (email + saldo) + Doar</h3>
   <button class="btn btn-green" onclick="loadUsers()">Atualizar Usuários</button>
   <div style="overflow:auto;margin-top:8px"><table id="tblUsers"><tr><th>Email</th><th>Username</th><th>Saldo ZP$</th><th>Ação</th></tr></table></div>
 </div>
@@ -141,13 +192,39 @@ async function loadUsers(){
   try{
     const d=await apiGet('/api/admin/users');
     const tbl=document.getElementById('tblUsers');
+    const sel=document.getElementById('doacaoUser');
     tbl.innerHTML='<tr><th>Email</th><th>Username</th><th>Saldo ZP$</th><th>Ação</th></tr>';
+    sel.innerHTML='<option value="">Escolha usuário...</option>';
     (d.users||[]).forEach(u=>{
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${u.email||''}</td><td>${u.username||''}</td><td>ZP$ ${u.cash_zp||0}</td><td><button class="btn btn-red" onclick="bloquear('${u.id}')">Bloquear</button></td>`;
+      tr.innerHTML=`<td>${u.email||''}</td><td>${u.username||''}</td><td>ZP$ ${u.cash_zp||0}</td><td><button class="btn btn-blue" onclick="prepararDoacao('${u.id}','${u.email}')">🎁 Doar</button> <button class="btn btn-red" onclick="bloquear('${u.id}')">Bloquear</button></td>`;
       tbl.appendChild(tr);
+      const opt=document.createElement('option');
+      opt.value=u.id;
+      opt.textContent=(u.email||u.username)+' - ZP$ '+(u.cash_zp||0);
+      sel.appendChild(opt);
     });
   }catch(e){alert('Erro users: '+e.message)}
+}
+function prepararDoacao(userId, email){
+  document.getElementById('doacaoUser').value=userId;
+  document.getElementById('doacaoMotivo').value='Doação para '+email;
+  window.scrollTo(0,0);
+  document.getElementById('doacaoValor').focus();
+}
+async function doarCredito(){
+  const user_id=document.getElementById('doacaoUser').value;
+  const amount=document.getElementById('doacaoValor').value;
+  const reason=document.getElementById('doacaoMotivo').value||'Doação admin';
+  if(!user_id) return alert('Escolha usuário!');
+  if(!amount) return alert('Digite valor ZP$!');
+  if(!confirm(`Doar ZP$ ${amount} para usuário?`)) return;
+  try{
+    const d=await apiPost('/api/admin/users',{user_id, amount, action:'donate', reason});
+    document.getElementById('doacaoStatus').textContent=`✅ Doado ZP$ ${amount}! Novo saldo ZP$ ${d.new_cash}`;
+    alert(`Doado ZP$ ${amount}! Novo saldo ZP$ ${d.new_cash}`);
+    loadUsers(); loadDonations();
+  }catch(e){alert('Erro doação: '+e.message)}
 }
 async function bloquear(user_id){
   if(!confirm('Bloquear usuário?')) return;
@@ -155,7 +232,74 @@ async function bloquear(user_id){
   alert('Bloqueado');
   loadUsers();
 }
-loadStats(); loadBonus(); loadWithdrawals(); loadTransactions(); loadUsers();
+async function loadPackages(){
+  try{
+    const d=await apiGet('/api/admin/packages');
+    const tbl=document.getElementById('tblPackages');
+    tbl.innerHTML='<tr><th>Label</th><th>ZP$</th><th>R$</th><th>Ativo</th><th>Ação</th></tr>';
+    (d.packages||[]).forEach(p=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${p.label||''}</td><td>${p.amount_zp||''}</td><td>R$ ${p.amount_brl||''}</td><td>${p.active?'✅':''}</td><td><button class="btn btn-blue" onclick="editarPacote('${p.id}',${p.amount_zp},${p.amount_brl},'${p.label}')">Editar</button> <button class="btn btn-red" onclick="deletarPacote('${p.id}')">Excluir</button></td>`;
+      tbl.appendChild(tr);
+    });
+  }catch(e){alert('Erro pacotes: '+e.message)}
+}
+function setPacote(zp,brl,label){
+  document.getElementById('pkgZp').value=zp;
+  document.getElementById('pkgBrl').value=brl;
+  document.getElementById('pkgLabel').value=label;
+}
+function editarPacote(id,zp,brl,label){
+  document.getElementById('pkgZp').value=zp;
+  document.getElementById('pkgBrl').value=brl;
+  document.getElementById('pkgLabel').value=label;
+  document.getElementById('pkgLabel').dataset.editId=id;
+  window.scrollTo(0,200);
+}
+async function salvarPacoteRapido(){
+  const zp=parseFloat(document.getElementById('pkgZp').value);
+  const brl=parseFloat(document.getElementById('pkgBrl').value);
+  const label=document.getElementById('pkgLabel').value;
+  const editId=document.getElementById('pkgLabel').dataset.editId;
+  if(!zp||!brl||!label) return alert('Preencha ZP$, R$ e Label!');
+  try{
+    if(editId){
+      await apiPost('/api/admin/packages',{id:editId, amount_zp:zp, amount_brl:brl, label, active:1});
+      delete document.getElementById('pkgLabel').dataset.editId;
+    }else{
+      await apiPost('/api/admin/packages',{amount_zp:zp, amount_brl:brl, label, active:1});
+    }
+    alert('Pacote salvo! '+label+' - R$'+brl+' = '+zp+' ZP$');
+    document.getElementById('pkgZp').value=''; document.getElementById('pkgBrl').value=''; document.getElementById('pkgLabel').value='';
+    loadPackages();
+  }catch(e){alert('Erro: '+e.message)}
+}
+async function criarPacote(){
+  const zp=prompt('Quantos ZP$? ex: 200');
+  const brl=prompt('Quantos R$? ex: 2');
+  const label=prompt('Label? ex: 200 ZP$ - Teste');
+  if(!zp||!brl) return;
+  await apiPost('/api/admin/packages',{amount_zp:parseFloat(zp), amount_brl:parseFloat(brl), label:label||zp+' ZP$', active:1});
+  loadPackages();
+}
+async function deletarPacote(id){
+  if(!confirm('Excluir pacote?')) return;
+  await apiPost('/api/admin/packages',{id, action:'delete'});
+  loadPackages();
+}
+async function loadDonations(){
+  try{
+    const d=await apiGet('/api/admin/donations');
+    const tbl=document.getElementById('tblDonations');
+    tbl.innerHTML='<tr><th>Data</th><th>Email</th><th>ZP$</th><th>Motivo</th></tr>';
+    (d.donations||[]).forEach(x=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${x.created_at||''}</td><td>${x.email||x.username||x.user_id||''}</td><td style="color:#00c950">+ZP$ ${x.amount_zp||''}</td><td>${x.reason||''}</td>`;
+      tbl.appendChild(tr);
+    });
+  }catch(e){console.log(e)}
+}
+loadStats(); loadBonus(); loadWithdrawals(); loadTransactions(); loadUsers(); loadPackages(); loadDonations();
 </script>
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
