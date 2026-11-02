@@ -96,7 +96,12 @@ body{background:#05070a;color:#fff;font-family:'Space Grotesk',sans-serif;min-he
     <input class="input" id="loginEmail" placeholder="Seu email (ex: jean@gmail.com)">
     <input class="input" id="loginPass" type="password" placeholder="Sua senha">
     <input class="input" id="loginNome" placeholder="Nome de usuário (só pra cadastro)">
-    <button onclick="login()" style="width:100%;height:44px;background:#facc15;color:#000;border:none;border-radius:10px;font-weight:700;margin-top:6px;cursor:pointer">ENTRAR / CADASTRAR CONTA</button>
+    
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button onclick="login()" style="flex:1;height:44px;background:#00c950;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">🟢 ENTRAR</button>
+      <button onclick="cadastrar()" style="flex:1;height:44px;background:#facc15;color:#000;border:none;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 0 12px rgba(250,204,21,0.3)">🟡 CADASTRAR</button>
+    </div>
+
     <div style="font-size:10px;color:#6b7280;margin-top:6px">Se email não existe, já cadastra com bônus do admin!</div>
   </div>
 
@@ -219,6 +224,16 @@ async function carregarDoBanco(){
 async function salvarNoBanco(comm,type,price){
   const t=localStorage.getItem('zp_token'); if(!t) return;
   try{const r=await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({commodity:comm,type,qty:1,price})});const d=await r.json();if(d.cash_zp!=null){cash=d.cash_zp;upd();}}catch(e){}
+}
+async function cadastrar(){
+  const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value, nome=document.getElementById('loginNome').value||email.split('@')[0];
+  if(!email||!pass) return alert('Email e senha');
+  try{
+    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:nome,email,password:pass})});
+    const d=await r.json();
+    if(d.token){ localStorage.setItem('zp_token',d.token); await carregarDoBanco(); alert('Conta criada '+nome+'! Bônus ZP$ '+d.bonus+'!'); document.getElementById('contaModal').classList.remove('open'); }
+    else alert(d.error||'Erro cadastro');
+  }catch(e){alert(e.message)}
 }
 async function login(){
   const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value, nome=document.getElementById('loginNome').value||email.split('@')[0];
