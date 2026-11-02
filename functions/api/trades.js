@@ -7,41 +7,31 @@ export async function onRequestPost({request, env}){
     try{ await env.DB.prepare("CREATE TABLE IF NOT EXISTS trades (id TEXT PRIMARY KEY, user_id TEXT, commodity TEXT, type TEXT, qty INTEGER, price_zp REAL, fee_zp REAL, created_at TEXT)").run(); }catch{}
     
     const sess = await env.DB.prepare("SELECT user_id FROM sessions WHERE id=?").bind(token).first();
-    if(!sess) return Response.json({error:"Sem login - faça login de novo"}, {status:401});
+    if(!sess) return Response.json({error:"Sem login"}, {status:401});
     
-    const body = await request.json();
-    const commodity = body.commodity || "CAFÉ";
-    const type = body.type || "BUY";
-    const qty = body.qty || 1;
-    const price = body.price || 121.97;
+    const {commodity, type, qty, price} = await request.json();
     const fee = 0.48;
     
     let port = await env.DB.prepare("SELECT cash_zp FROM portfolios WHERE user_id=?").bind(sess.user_id).first();
     if(!port){
-      const id = crypto.randomUUID();
-      await env.DB.prepare("INSERT INTO portfolios (id, user_id, cash_zp, total_value) VALUES (?,?,?,?)").bind(id, sess.user_id, 5000, 5000).run();
+      try{
+        const id = crypto.randomUUID();
+        await env.DB.prepare("INSERT INTO portfolios (id, user_id, cash_zp, total_value) VALUES (?,?,?,?)").bind(id, sess.user_id, 5000, 5000).run();
+      }catch{
+        await env.DB.prepare("INSERT INTO portfolios (user_id, cash_zp, total_value) VALUES (?,?,?)").bind(sess.user_id, 5000, 5000).run();
+      }
       port = {cash_zp:5000};
     }
     
     const cash = port.cash_zp || 5000;
-    let newCash;
-    if(type==="BUY"){
-      newCash = cash - (price*qty) - fee;
-      if(newCash < 0) return Response.json({error:"Saldo insuficiente"}, {status:400});
-    } else {
-      newCash = cash + (price*qty) - fee;
-    }
+    let newCash = type==="BUY" ? cash - price*(qty||1) - fee : cash + price*(qty||1) - fee;
+    if(newCash < 0) return Response.json({error:"Saldo insuficiente"}, {status:400});
     
     await env.DB.prepare("UPDATE portfolios SET cash_zp=? WHERE user_id=?").bind(Math.round(newCash*100)/100, sess.user_id).run();
     
     const tradeId = crypto.randomUUID();
-    await env.DB.prepare("INSERT INTO trades (id, user_id, commodity, type, qty, price_zp, fee_zp, created_at) VALUES (?,?,?,?,?,?,?, datetime('now'))").bind(tradeId, sess.user_id, commodity, type, qty, price, fee).run();
+    await env.DB.prepare("INSERT INTO trades (id, user_id, commodity, type, qty, price_zp, fee_zp, created_at) VALUES (?,?,?,?,?,?,?, datetime('now'))").bind(tradeId, sess.user_id, commodity, type, qty||1, price, fee).run();
     
-    return Response.json({ok:true, cash_zp: newCash, trade_id: tradeId, commodity, type, price});
-  }catch(e){
-    return Response.json({error:e.message}, {status:500});
-  }
-}
-export async function onRequestGet({request, env}){
-  return Response.json({ok:true, msg:"Use POST"});
+    return Response.json({ok:true, cash_zp:newCash, trade_id:tradeId});
+  }catch(e){ return Response.json({error:e.message}, {status:500}); }
 }
