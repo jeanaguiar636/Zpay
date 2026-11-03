@@ -148,25 +148,49 @@ function upd(){
   document.getElementById('btnComprar').innerHTML=`COMPRAR ${current}<br><span style="font-size:10px">ZP$ ${price.toFixed(2)} • Qty 1 • fee ZP$ 0.48</span>`;
   document.getElementById('btnVender').innerHTML=`VENDER ${current}<br><span style="font-size:10px">ZP$ ${price.toFixed(2)} • Qty 1 • fee ZP$ 0.48</span>`;
 }
+
 async function carregarMe(){
-  if(!token) return;
+  token=localStorage.getItem('zp_token');
+  if(!token){
+    document.getElementById('vocStatus').textContent='Não logado';
+    return;
+  }
+  // Tenta primeiro /api/me, se falhar usa /api/zbank/wallet (que você disse que funciona!)
   try{
-    const r=await fetch('/api/me',{headers:{Authorization:'Bearer '+token}});
-    const d=await r.json();
-    if(d.cash_zp!=null || d.ok){
+    let d=null;
+    let r=await fetch('/api/me',{headers:{Authorization:'Bearer '+token}});
+    if(r.ok){
+      d=await r.json();
       cash=parseFloat(d.cash_zp||d.portfolio?.cash_zp||5000);
-      const username=d.username||d.user?.username||d.email||'';
-      document.getElementById('vocStatus').textContent='Logado: '+username+' • ZP$ '+cash.toFixed(2);
+    }else{
+      // fallback: usa zbank/wallet que funciona no ZBank!
+      const r2=await fetch('/api/zbank/wallet',{headers:{Authorization:'Bearer '+token}});
+      const d2=await r2.json();
+      if(d2.ok || d2.cash_agropay_zp!=null){
+        cash=parseFloat(d2.cash_agropay_zp||5000);
+        d={username:'',email:'', cash_zp:cash};
+        d.username=d2.user_id||''; // se tiver
+        // tenta pegar nome do localStorage
+        const savedName=localStorage.getItem('zp_username')||'';
+        if(savedName) d.username=savedName;
+      }
+    }
+    if(d){
+      const username=d.username||d.user?.username||d.email||localStorage.getItem('zp_username')||'Logado';
+      const email=d.email||d.user?.email||'';
+      // Mostra no topo igual sua foto 1 que deu 11022.44
+      document.getElementById('vocStatus').innerHTML='Logado: <b style="color:#00c950">'+username+'</b> • ZP$ '+cash.toFixed(2);
       document.getElementById('areaLogado').style.display='block';
       document.getElementById('areaLogin').style.display='none';
       document.getElementById('logadoNome').textContent=username;
-      document.getElementById('logadoEmail').textContent=d.email||d.user?.email||'';
+      document.getElementById('logadoEmail').textContent=email;
       document.getElementById('logadoSaldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
       document.getElementById('btnConta').textContent='👤 '+username;
       upd();
     }
-  }catch(e){console.log('me err',e)}
+  }catch(e){ console.log('carregarMe erro',e); document.getElementById('vocStatus').textContent='Erro ao carregar - tente logar de novo'; }
 }
+
 function openConta(){ document.getElementById('contaModal').classList.add('open'); carregarMe(); }
 async function fazerLogin(){
   const email=document.getElementById('loginEmail').value.trim();
@@ -176,7 +200,7 @@ async function fazerLogin(){
     const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
     const d=await r.json();
     if(!r.ok) throw new Error(d.error||'Erro login');
-    token=d.token; localStorage.setItem('zp_token',token);
+    token=d.token; localStorage.setItem('zp_token',token); localStorage.setItem('zp_username', d.user?.username||d.username||email.split('@')[0]); if(d.user?.username||d.username) localStorage.setItem('zp_username', d.user?.username||d.username||email);
     alert('Logado! Bem-vindo '+(d.user?.username||email)+'! Saldo: ZP$ '+(d.cash_zp||d.user?.cash_zp||'')); 
     document.getElementById('contaModal').classList.remove('open');
     await carregarMe();
@@ -190,7 +214,7 @@ async function fazerCadastro(){
     const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,username:email.split('@')[0]})});
     const d=await r.json();
     if(!r.ok) throw new Error(d.error||'Erro cadastro');
-    token=d.token; localStorage.setItem('zp_token',token);
+    token=d.token; localStorage.setItem('zp_token',token); if(d.user?.username||d.username) localStorage.setItem('zp_username', d.user?.username||d.username||email);
     alert('Cadastrado! Saldo: ZP$ '+(d.cash_zp||5000));
     document.getElementById('contaModal').classList.remove('open');
     await carregarMe();
