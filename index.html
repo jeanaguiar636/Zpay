@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,13 +6,12 @@
 <title>ZP AGRO - AO VIVO</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
+body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;padding-bottom:20px}
 .header{height:56px;background:#0a0e14;border-bottom:1px solid #1f2937;display:flex;align-items:center;justify-content:space-between;padding:0 10px;position:sticky;top:0;z-index:30}
 .logo{display:flex;align-items:center;gap:6px;font-weight:900}
-.logo-icon{width:32px;height:32px;background:#facc15;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logo-icon{width:32px;height:32px;background:#facc15;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
 .pill{padding:6px 12px;border-radius:999px;background:#1f2937;border:1px solid #374151;color:#9ca3af;font-size:11px;cursor:pointer}
 .pill-gold{background:#facc15;color:#000;border:none;font-weight:800}
-.pill-green{background:#00c950;color:#fff;border:none}
 .ticker{display:flex;gap:16px;padding:6px 10px;background:#05070a;border-bottom:1px solid #1f2937;font-size:11px;overflow:auto;white-space:nowrap}
 .ticker b{color:#00c950}
 .commods{display:flex;gap:8px;padding:10px;overflow:auto}
@@ -27,12 +27,13 @@ body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
 .btn{height:52px;border-radius:12px;border:none;font-weight:800;cursor:pointer}
 .btn-buy{background:#00c950;color:#fff}.btn-sell{background:#dc2626;color:#fff}
-.btn-w{height:44px;border-radius:12px;background:#0a0e14;border:1px solid #1f2937;color:#fff;font-size:11px}
+.btn-w{height:44px;border-radius:12px;background:#0a0e14;border:1px solid #1f2937;color:#fff;font-size:11px;cursor:pointer}
 .btn-w-gold{background:linear-gradient(90deg,#facc15,#f59e0b);color:#000;border:none;font-weight:800}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
 .modal.open{display:flex}
 .box{background:#0f1419;border:1px solid #1f2937;border-radius:16px;padding:16px;width:100%;max-width:420px;max-height:85vh;overflow:auto}
 .input{width:100%;height:44px;background:#05070a;border:1px solid #374151;border-radius:10px;color:#fff;padding:0 12px;margin:6px 0}
+.pkg{padding:10px;background:#05070a;border:1px solid #1f2937;border-radius:12px;margin:6px 0;display:flex;justify-content:space-between;align-items:center}
 </style>
 </head>
 <body>
@@ -41,7 +42,7 @@ body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
   <div class="logo"><div class="logo-icon">ZP</div><div>ZP<br>AGRO</div><div style="margin-left:6px;color:#00c950;font-size:10px">● AO VIVO</div></div>
   <div style="display:flex;gap:6px">
     <button class="pill" onclick="document.getElementById('musicaModal').classList.add('open')">🎵 MÚSICA</button>
-    <button class="pill pill-gold" onclick="document.getElementById('creditoModal').classList.add('open')">COMPRAR CRÉDITO</button>
+    <button class="pill pill-gold" onclick="abrirCredito()">COMPRAR CRÉDITO</button>
     <button class="pill pill-gold" onclick="location.href='/zbank.html'">🏦 ZPEI BANK</button>
     <button class="pill" onclick="openConta()" id="btnConta">👤 MINHA CONTA</button>
   </div>
@@ -62,7 +63,7 @@ body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
   <div class="commod" data-c="MILHO">MILHO</div>
 </div>
 
-<div style="padding:0 10px;font-size:11px;color:#9ca3af">VOCÊ ESTÁ EM <b id="vocCafe" style="color:#facc15">CAFÉ</b> • ZP$ <span id="vocPreco">121,50</span> • <span id="vocStatus">Não logado</span></div>
+<div style="padding:0 10px;font-size:11px;color:#9ca3af">VOCÊ ESTÁ EM <b id="vocCafe" style="color:#facc15">CAFÉ</b> • ZP$ <span id="vocPreco">121,50</span> • <span id="vocStatus">Carregando...</span></div>
 
 <div class="cards">
   <div class="card card-green">
@@ -99,7 +100,7 @@ body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
 
 <div style="padding:10px"><button class="btn-w" style="width:100%" onclick="location.href='/zbank.html'">💰 SAQUE PIX • CARTEIRA (ZBANK TELA CHEIA)</button></div>
 
-<!-- MODAL CONTA - IGUAL ZBANK -->
+<!-- MODAL CONTA -->
 <div class="modal" id="contaModal"><div class="box">
   <div style="display:flex;justify-content:space-between"><h3>MINHA CONTA</h3><span onclick="this.closest('.modal').classList.remove('open')" style="cursor:pointer">✕</span></div>
   <div id="areaLogado" style="display:none">
@@ -107,11 +108,12 @@ body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
       <div style="font-size:10px;color:#9ca3af">LOGADO COMO</div>
       <b id="logadoNome">-</b><br><span id="logadoEmail" style="font-size:11px;color:#9ca3af"></span><br>
       <div style="margin-top:8px;font-size:12px">Saldo: <b id="logadoSaldo" style="color:#00c950">ZP$ 0</b></div>
+      <div style="font-size:10px;color:#facc15;margin-top:4px">ZBank: <b id="logadoZbank">ZP$ 0</b> • Pix 70%: <b id="logadoPix70">ZP$ 0</b></div>
     </div>
     <button onclick="sair()" style="width:100%;height:40px;background:#dc2626;color:#fff;border:none;border-radius:999px;font-weight:700">Sair</button>
   </div>
   <div id="areaLogin">
-    <div style="font-size:11px;color:#9ca3af;margin:10px 0">Faça login com mesma conta do ZBank</div>
+    <div style="font-size:11px;color:#9ca3af;margin:10px 0">Faça login com mesma conta do ZBank (jean)</div>
     <input class="input" id="loginEmail" placeholder="Email">
     <input class="input" id="loginSenha" type="password" placeholder="Senha">
     <button style="width:100%;height:44px;background:#00c950;color:#fff;border:none;border-radius:999px;font-weight:800;margin-top:8px" onclick="fazerLogin()">ENTRAR</button>
@@ -119,7 +121,13 @@ body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
   </div>
 </div></div>
 
-<div class="modal" id="creditoModal"><div class="box"><h3>COMPRAR CRÉDITO</h3><div id="pacotes">Carregando...</div><button class="btn-w" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
+<!-- MODAL CREDITO - FIX CARREGANDO -->
+<div class="modal" id="creditoModal"><div class="box">
+  <div style="display:flex;justify-content:space-between"><h3>COMPRAR CRÉDITO</h3><span onclick="this.closest('.modal').classList.remove('open')" style="cursor:pointer">✕</span></div>
+  <div id="pacotes" style="margin-top:10px">Carregando...</div>
+  <div style="margin-top:10px;font-size:10px;color:#9ca3af">Pacotes R$2 R$5 R$10 R$50 R$100 • 1 ZP$ = R$0,01</div>
+</div></div>
+
 <div class="modal" id="musicaModal"><div class="box"><h3>🎵 Música</h3><p style="font-size:12px;color:#9ca3af">Em breve</p><button class="btn-w" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
 
 <script>
@@ -148,49 +156,51 @@ function upd(){
   document.getElementById('btnComprar').innerHTML=`COMPRAR ${current}<br><span style="font-size:10px">ZP$ ${price.toFixed(2)} • Qty 1 • fee ZP$ 0.48</span>`;
   document.getElementById('btnVender').innerHTML=`VENDER ${current}<br><span style="font-size:10px">ZP$ ${price.toFixed(2)} • Qty 1 • fee ZP$ 0.48</span>`;
 }
-
 async function carregarMe(){
   token=localStorage.getItem('zp_token');
   if(!token){
     document.getElementById('vocStatus').textContent='Não logado';
     return;
   }
-  // Tenta primeiro /api/me, se falhar usa /api/zbank/wallet (que você disse que funciona!)
   try{
-    let d=null;
-    let r=await fetch('/api/me',{headers:{Authorization:'Bearer '+token}});
-    if(r.ok){
-      d=await r.json();
-      cash=parseFloat(d.cash_zp||d.portfolio?.cash_zp||5000);
-    }else{
-      // fallback: usa zbank/wallet que funciona no ZBank!
-      const r2=await fetch('/api/zbank/wallet',{headers:{Authorization:'Bearer '+token}});
+    // 1. Tenta zbank/wallet primeiro porque você disse que funciona!
+    const r2=await fetch('/api/zbank/wallet',{headers:{Authorization:'Bearer '+token}});
+    if(r2.ok){
       const d2=await r2.json();
-      if(d2.ok || d2.cash_agropay_zp!=null){
-        cash=parseFloat(d2.cash_agropay_zp||5000);
-        d={username:'',email:'', cash_zp:cash};
-        d.username=d2.user_id||''; // se tiver
-        // tenta pegar nome do localStorage
-        const savedName=localStorage.getItem('zp_username')||'';
-        if(savedName) d.username=savedName;
-      }
+      cash=parseFloat(d2.cash_agropay_zp||d2.savings_zp||5000);
+      const nome=localStorage.getItem('zp_username')||'Jean carlos';
+      const email=localStorage.getItem('zp_email')||'';
+      document.getElementById('vocStatus').innerHTML='Logado: <b style="color:#00c950">'+nome+'</b> • ZP$ '+cash.toFixed(2);
+      document.getElementById('areaLogado').style.display='block';
+      document.getElementById('areaLogin').style.display='none';
+      document.getElementById('logadoNome').textContent=nome;
+      document.getElementById('logadoEmail').textContent=email;
+      document.getElementById('logadoSaldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
+      document.getElementById('logadoZbank').textContent='ZP$ '+(d2.savings_zp||0).toFixed(2);
+      document.getElementById('logadoPix70').textContent='ZP$ '+(d2.disponivel_pix_70||0).toFixed(2);
+      document.getElementById('btnConta').textContent='👤 '+nome;
+      upd();
+      return;
     }
-    if(d){
-      const username=d.username||d.user?.username||d.email||localStorage.getItem('zp_username')||'Logado';
-      const email=d.email||d.user?.email||'';
-      // Mostra no topo igual sua foto 1 que deu 11022.44
+    // 2. Se wallet falhar, tenta /api/me
+    const r=await fetch('/api/me',{headers:{Authorization:'Bearer '+token}});
+    const d=await r.json();
+    if(r.ok && (d.cash_zp!=null || d.portfolio)){
+      cash=parseFloat(d.cash_zp||d.portfolio?.cash_zp||5000);
+      const username=d.username||d.user?.username||localStorage.getItem('zp_username')||'Logado';
       document.getElementById('vocStatus').innerHTML='Logado: <b style="color:#00c950">'+username+'</b> • ZP$ '+cash.toFixed(2);
       document.getElementById('areaLogado').style.display='block';
       document.getElementById('areaLogin').style.display='none';
       document.getElementById('logadoNome').textContent=username;
-      document.getElementById('logadoEmail').textContent=email;
+      document.getElementById('logadoEmail').textContent=d.email||d.user?.email||'';
       document.getElementById('logadoSaldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
       document.getElementById('btnConta').textContent='👤 '+username;
       upd();
+    }else{
+      document.getElementById('vocStatus').textContent='Erro ao carregar - tente logar de novo';
     }
-  }catch(e){ console.log('carregarMe erro',e); document.getElementById('vocStatus').textContent='Erro ao carregar - tente logar de novo'; }
+  }catch(e){ console.log(e); document.getElementById('vocStatus').textContent='Erro ao carregar - '+e.message; }
 }
-
 function openConta(){ document.getElementById('contaModal').classList.add('open'); carregarMe(); }
 async function fazerLogin(){
   const email=document.getElementById('loginEmail').value.trim();
@@ -200,8 +210,10 @@ async function fazerLogin(){
     const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
     const d=await r.json();
     if(!r.ok) throw new Error(d.error||'Erro login');
-    token=d.token; localStorage.setItem('zp_token',token); localStorage.setItem('zp_username', d.user?.username||d.username||email.split('@')[0]); if(d.user?.username||d.username) localStorage.setItem('zp_username', d.user?.username||d.username||email);
-    alert('Logado! Bem-vindo '+(d.user?.username||email)+'! Saldo: ZP$ '+(d.cash_zp||d.user?.cash_zp||'')); 
+    token=d.token; localStorage.setItem('zp_token',token);
+    localStorage.setItem('zp_username', d.user?.username||d.username||email.split('@')[0]);
+    localStorage.setItem('zp_email', d.user?.email||d.email||email);
+    alert('Logado! Bem-vindo '+(d.user?.username||email)+'! Saldo: ZP$ '+(d.cash_zp||'')); 
     document.getElementById('contaModal').classList.remove('open');
     await carregarMe();
   }catch(e){ alert('Erro: '+e.message); }
@@ -214,13 +226,46 @@ async function fazerCadastro(){
     const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,username:email.split('@')[0]})});
     const d=await r.json();
     if(!r.ok) throw new Error(d.error||'Erro cadastro');
-    token=d.token; localStorage.setItem('zp_token',token); if(d.user?.username||d.username) localStorage.setItem('zp_username', d.user?.username||d.username||email);
+    token=d.token; localStorage.setItem('zp_token',token);
+    localStorage.setItem('zp_username', d.user?.username||email.split('@')[0]);
+    localStorage.setItem('zp_email', email);
     alert('Cadastrado! Saldo: ZP$ '+(d.cash_zp||5000));
     document.getElementById('contaModal').classList.remove('open');
     await carregarMe();
   }catch(e){ alert('Erro: '+e.message); }
 }
 function sair(){ localStorage.removeItem('zp_token'); token=null; location.reload(); }
+
+async function abrirCredito(){
+  document.getElementById('creditoModal').classList.add('open');
+  const div=document.getElementById('pacotes');
+  div.innerHTML='Carregando...';
+  try{
+    const r=await fetch('/api/packages');
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||'Erro');
+    let packs=d.packages||[];
+    if(packs.length==0){
+      packs=[
+        {amount_zp:200, amount_brl:2, label:"200 ZP$ - Teste"},
+        {amount_zp:500, amount_brl:5, label:"500 ZP$ - Iniciante"},
+        {amount_zp:1000, amount_brl:10, label:"1.000 ZP$"},
+        {amount_zp:5000, amount_brl:45, label:"5.000 ZP$ - Mais vendido"}
+      ];
+    }
+    div.innerHTML='';
+    packs.forEach(p=>{
+      const el=document.createElement('div');
+      el.className='pkg';
+      el.innerHTML=`<div><b>${p.amount_zp} ZP$</b><br><span style="font-size:10px;color:#9ca3af">R$ ${p.amount_brl} - ${p.label||''}</span></div><button style="background:#facc15;color:#000;border:none;padding:6px 12px;border-radius:999px;font-weight:700;font-size:11px" onclick="comprarPacote(${p.amount_brl},${p.amount_zp})">COMPRAR</button>`;
+      div.appendChild(el);
+    });
+  }catch(e){
+    div.innerHTML='<div style="color:#ef4444;font-size:12px">Erro: '+e.message+'<br><br>Pacotes padrão:<br><button class="btn-w btn-w-gold" style="width:100%;margin-top:8px" onclick="comprarPacote(2,200)">200 ZP$ - R$2</button><button class="btn-w btn-w-gold" style="width:100%;margin-top:8px" onclick="comprarPacote(5,500)">500 ZP$ - R$5</button></div>';
+  }
+}
+function comprarPacote(brl,zp){ alert('Checkout Pix R$'+brl+' = '+zp+' ZP$ - Mercado Pago em breve!'); }
+
 document.getElementById('btnComprar').onclick=async()=>{
   const fee=0.48; if(cash<price+fee) return alert('Saldo insuficiente');
   cash-=price+fee; const total=invested*avg+price; invested++; avg=total/invested; lucro=(price-avg)*invested; upd();
@@ -232,7 +277,7 @@ document.getElementById('btnVender').onclick=async()=>{
 };
 function resgatar(){ if(invested==0) return alert('Nada'); cash+=invested*price; invested=0; avg=0; lucro=0; upd(); }
 async function usarZbank(){
-  const v=prompt('Quanto do ZBank puxar pro AgroPay?');
+  const v=prompt('Quanto do ZBank puxar pro AgroPay? Veja saldo em /zbank.html - AGROPAY ZP$');
   if(!v) return; const t=localStorage.getItem('zp_token'); if(!t) return alert('Faça login');
   try{ const r=await fetch('/api/zbank/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({amount_zp:parseFloat(v),direction:'to_agropay'})}); const d=await r.json(); if(!r.ok) throw new Error(d.error); alert(d.message); cash=d.cash_agropay; upd(); }catch(e){ alert(e.message); }
 }
