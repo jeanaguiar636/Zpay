@@ -4,6 +4,22 @@ export async function onRequestGet({request, env}){
       await env.DB.prepare("CREATE TABLE IF NOT EXISTS credit_packages (id TEXT PRIMARY KEY, amount_zp REAL, amount_brl REAL, label TEXT, active INTEGER, created_at TEXT)").run();
     }catch{}
     
+    // FIX: Adiciona colunas se não existem (resolve erro no such column)
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN amount_brl REAL").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN amount_zp REAL").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN label TEXT").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN active INTEGER DEFAULT 1").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN created_at TEXT").run(); }catch{}
+    
+    // Se deu erro de coluna, apaga e recria do zero
+    try{
+      await env.DB.prepare("SELECT amount_brl FROM credit_packages LIMIT 1").first();
+    }catch{
+      // Coluna não existe, dropa tudo e recria
+      await env.DB.prepare("DROP TABLE IF EXISTS credit_packages").run();
+      await env.DB.prepare("CREATE TABLE credit_packages (id TEXT PRIMARY KEY, amount_zp REAL, amount_brl REAL, label TEXT, active INTEGER, created_at TEXT)").run();
+    }
+    
     // Cria pacotes padrão se não existem
     try{
       const count = await env.DB.prepare("SELECT COUNT(*) as c FROM credit_packages").first();
@@ -33,6 +49,15 @@ export async function onRequestGet({request, env}){
 
 export async function onRequestPost({request, env}){
   try{
+    // Garante tabela existe com colunas novas
+    try{
+      await env.DB.prepare("CREATE TABLE IF NOT EXISTS credit_packages (id TEXT PRIMARY KEY, amount_zp REAL, amount_brl REAL, label TEXT, active INTEGER, created_at TEXT)").run();
+    }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN amount_brl REAL").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN amount_zp REAL").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN label TEXT").run(); }catch{}
+    try{ await env.DB.prepare("ALTER TABLE credit_packages ADD COLUMN active INTEGER DEFAULT 1").run(); }catch{}
+    
     const {id, amount_zp, amount_brl, label, active, action} = await request.json();
     
     if(action==="delete" && id){
