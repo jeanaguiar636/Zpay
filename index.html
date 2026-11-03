@@ -291,7 +291,9 @@ async function comprarPacote(brl,zp){
         <p style="word-break:break-all;font-size:10px;background:#0a0e14;padding:10px;border-radius:8px;margin-top:10px">${d.pix_code||''}</p>
         <p style="font-size:11px;color:#9ca3af">Após pagar, saldo entra automático! Feche e volte pro AgroPay.</p>
         <button onclick="window.close()" style="margin-top:12px;padding:10px 20px;background:#facc15;border:none;border-radius:999px;font-weight:800">Fechar</button>
-      </body></html>
+      
+<div class="modal" id="pixModal"><div class="box" style="max-width:480px;width:95%;max-height:95vh;overflow:auto"><div id="pixContent">Carregando Pix...</div></div></div>
+</body></html>
     `);
   }catch(e){ alert('Erro: '+e.message); }
 }
@@ -316,5 +318,7 @@ document.querySelectorAll('.commod').forEach(el=>el.onclick=()=>{document.queryS
 setInterval(()=>{ price*=1+(Math.random()-0.5)*0.008; hist.push(price); if(hist.length>40) hist.shift(); if(invested>0) lucro=(price-avg)*invested; draw(); upd(); },3000);
 draw();upd();carregarMe();
 </script>
+
+<div class="modal" id="pixModal"><div class="box" style="max-width:480px;width:95%;max-height:95vh;overflow:auto"><div id="pixContent">Carregando Pix...</div></div></div>
 </body>
 </html>
