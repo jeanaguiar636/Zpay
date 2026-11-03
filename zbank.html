@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZBank • Banco ZPay</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;min-height:100vh}
+.header{height:56px;background:#0a0e14;border-bottom:1px solid #1f2937;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:18px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#facc15,#f59e0b);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900}
+.badge{background:#00c950;color:#fff;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700}
+.container{max-width:480px;margin:0 auto;padding:16px}
+.card{background:#0a0e14;border:1px solid #1f2937;border-radius:16px;padding:16px;margin-bottom:12px}
+.card-gold{background:linear-gradient(135deg,#facc15,#f59e0b);color:#000;border:none}
+.card-label{font-size:10px;opacity:0.7;letter-spacing:1px;font-weight:700}
+.card-value{font-size:28px;font-weight:900;margin:8px 0}
+.card-sub{font-size:11px;opacity:0.8}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{height:48px;border-radius:999px;border:none;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-gold{background:linear-gradient(90deg,#facc15,#f59e0b);color:#000}
+.btn-green{background:#00c950;color:#fff}
+.btn-dark{background:#1f2937;color:#fff;border:1px solid #374151}
+.input{width:100%;height:48px;background:#05070a;border:1px solid #374151;border-radius:12px;padding:0 12px;color:#fff;margin:8px 0}
+.badge-gold{background:#facc15;color:#000;padding:2px 6px;border-radius:999px;font-size:9px;font-weight:800}
+.divider{height:1px;background:#1f2937;margin:12px 0}
+.txn{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1f2937;font-size:12px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo"><div class="logo-icon">ZB</div> ZBANK <span style="color:#facc15">• BANCO ZPAY</span></div>
+  <div style="display:flex;gap:8px"><span class="badge">AO VIVO</span><button onclick="location.href='/'" style="background:#1f2937;color:#fff;border:none;padding:6px 12px;border-radius:999px;font-size:11px">↩ AgroPay</button></div>
+</div>
+
+<div class="container">
+  <div class="card card-gold">
+    <div class="card-label">ZBANK • SUA POUPANÇA ZPAY</div>
+    <div class="card-value" id="saldoZbank">ZP$ 0,00</div>
+    <div class="card-sub">Saldo guardado em ZBank<br>Moeda: ZPay (ZP$) • 1 ZPay = R$0,01<br><b id="saldoBRL">R$ 0,00</b> • <span class="badge-gold">RENDENDO</span></div>
+    <div style="display:flex;gap:6px;margin-top:12px">
+      <div style="flex:1;background:rgba(0,0,0,0.15);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px">TOTAL GANHO</div><div style="font-weight:800" id="totalGanho">ZP$ 0</div></div>
+      <div style="flex:1;background:rgba(0,0,0,0.15);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px">AGROPAY</div><div style="font-weight:800" id="saldoAgro">ZP$ 0</div></div>
+      <div style="flex:1;background:rgba(0,0,0,0.15);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px">DISP. PIX 70%</div><div style="font-weight:800" id="pix70">ZP$ 0</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="border:2px solid #facc15">
+    <div style="font-weight:800;color:#facc15">🏦 USAR SALDO ZBANK → AGROPAY</div>
+    <div style="font-size:11px;color:#9ca3af;margin:6px 0">Puxe seu ZPay guardado no ZBank para operar café, soja, milho no AgroPay sem fazer Pix novo!</div>
+    <div style="font-size:11px">VALOR ZPAY PARA PUXAR</div>
+    <input class="input" id="valorPuxar" type="number" placeholder="Ex: 500">
+    <button class="btn btn-gold" style="width:100%" onclick="usarSaldoZbank()">🏦 PUXAR PARA AGROPAY E OPERAR</button>
+    <div class="divider"></div>
+    <div style="font-weight:700">📤 ENVIAR PARA POUPANÇA ZBANK</div>
+    <div style="font-size:11px;color:#9ca3af">Envie ZPay do AgroPay pra guardar no ZBank</div>
+    <input class="input" id="valorGuardar" type="number" placeholder="Ex: 300">
+    <button class="btn btn-dark" style="width:100%" onclick="guardarNoZbank()">💰 GUARDAR NO ZBANK</button>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between"><div style="font-weight:700">📜 Extrato ZBank • ZPay</div><button onclick="carregarZbank()" style="background:none;border:1px solid #374151;color:#fff;padding:4px 8px;border-radius:999px;font-size:10px">↻ Atualizar</button></div>
+    <div id="extrato" style="margin-top:8px"><div style="color:#6b7280;font-size:11px;text-align:center;padding:20px">Carregando extrato...</div></div>
+  </div>
+
+  <div class="card" style="background:#05070a;border:1px dashed #374151">
+    <div style="font-weight:700;font-size:11px">💡 COMO FUNCIONA 70/30:</div>
+    <div style="font-size:11px;color:#9ca3af;margin-top:6px">1. Você opera no AgroPay e ganha ZPay<br>2. Pede saque de 1000 ZP$<br>3. Sistema divide: <b style="color:#00c950">700 ZP$ (R$7) Pix</b> + <b style="color:#facc15">300 ZP$ ZBank poupança</b><br>4. 300 ZP$ fica guardado aqui no ZBank!<br>5. Quando quiser, clica USAR SALDO ZBANK e volta pro AgroPay pra operar de novo sem Pix!</div>
+  </div>
+</div>
+
+<script>
+const API = '';
+async function carregarZbank(){
+  const token = localStorage.getItem('zp_token');
+  if(!token){ document.getElementById('extrato').innerHTML='<div style="color:#ef4444;text-align:center">Faça login no AgroPay primeiro!</div>'; return; }
+  try{
+    const r = await fetch('/api/zbank/wallet',{headers:{Authorization:'Bearer '+token}});
+    const d = await r.json();
+    if(d.ok){
+      document.getElementById('saldoZbank').textContent='ZP$ '+d.savings_zp.toLocaleString('pt-BR',{minimumFractionDigits:2});
+      document.getElementById('saldoBRL').textContent='R$ '+d.savings_brl.toFixed(2);
+      document.getElementById('totalGanho').textContent='ZP$ '+d.total_earned.toFixed(0);
+      document.getElementById('saldoAgro').textContent='ZP$ '+d.cash_agropay_zp.toFixed(0);
+      document.getElementById('pix70').textContent='ZP$ '+d.disponivel_pix_70.toFixed(0);
+      // extrato
+      const r2 = await fetch('/api/zbank/transactions',{headers:{Authorization:'Bearer '+token}});
+      const d2 = await r2.json().catch(()=>({transactions:[]}));
+      const list = d2.transactions||[];
+      if(list.length==0) document.getElementById('extrato').innerHTML='<div style="color:#6b7280;font-size:11px;text-align:center">Nenhuma transação ainda. Faça um saque 70/30 no AgroPay!</div>';
+      else{
+        let html='';
+        list.slice(0,20).forEach(t=>{
+          html+=`<div class="txn"><span>${t.type} • ${t.created_at||''}</span><b style="color:${t.type.includes('USAR')?'#00c950':'#facc15'}">${t.amount_zp>0?'+':''}ZP$ ${t.amount_zp}</b></div>`;
+        });
+        document.getElementById('extrato').innerHTML=html;
+      }
+    }
+  }catch(e){ console.error(e); }
+}
+async function usarSaldoZbank(){
+  const valor = parseFloat(document.getElementById('valorPuxar').value);
+  if(!valor) return alert('Digite valor!');
+  if(!confirm(`Puxar ZP$ ${valor} do ZBank para AgroPay e operar?`)) return;
+  const token = localStorage.getItem('zp_token');
+  const r = await fetch('/api/zbank/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({amount_zp:valor,direction:'to_agropay'})});
+  const d = await r.json();
+  if(r.ok){ alert(d.message); carregarZbank(); document.getElementById('valorPuxar').value=''; } else alert(d.error);
+}
+async function guardarNoZbank(){
+  const valor = parseFloat(document.getElementById('valorGuardar').value);
+  if(!valor) return alert('Digite valor!');
+  const token = localStorage.getItem('zp_token');
+  const r = await fetch('/api/zbank/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({amount_zp:valor,direction:'to_zbank'})});
+  const d = await r.json();
+  if(r.ok){ alert(d.message); carregarZbank(); document.getElementById('valorGuardar').value=''; } else alert(d.error);
+}
+carregarZbank();
+</script>
+</body>
+</html>
