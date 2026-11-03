@@ -79,16 +79,12 @@ body{background:#05070a;color:#fff;font-family:'Space Grotesk',sans-serif;min-he
   <button class="btn-wallet" id="btnParar" style="flex:1;background:#1f2937;border:1px solid #374151" onclick="pararNegociacao()">■ PARAR NEGOCIAÇÃO</button>
 </div>
 <div style="display:flex;gap:8px;margin-top:8px">
-  <button class="btn-wallet" id="btnUsarZbank" style="flex:1;background:linear-gradient(90deg,#facc15,#f59e0b);color:#000;font-weight:900;border:none" onclick="usarSaldoZbank()">🏦 USAR SALDO ZBANK → AGROPAY</button>
-  <button class="btn-wallet" style="flex:1;background:#0a0e14;border:1px solid #facc15;color:#facc15" onclick="document.getElementById('carteiraModal').classList.add('open')">💰 VER SALDOS 70/30</button>
-</div>
-<div id="zbankSaldoBar" style="background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.3);border-radius:8px;padding:6px 10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:11px">
-  <span>🏦 ZBank: <b id="zbankSaldoTop" style="color:#facc15">ZP$ 0,00</b></span>
-  <span>AgroPay: <b id="agropaySaldoTop" style="color:#00c950">ZP$ 0,00</b></span>
-  <span>Pix 70%: <b id="pix70Top">ZP$ 0</b></span>
+  <button class="btn-wallet" id="btnUsarZbank" style="flex:1;background:linear-gradient(90deg,#facc15,#f59e0b);color:#000;font-weight:900;border:none" onclick="location.href='/zbank.html'">🏦 USAR SALDO ZBANK → AGROPAY</button>
+  <button class="btn-wallet" style="flex:1;background:#0a0e14;border:1px solid #facc15;color:#facc15" onclick="location.href='/zbank.html'">💰 🏦 ZBANK - VER CARTEIRA 70/30 (TELA CHEIA)</button>
 </div>
 
-<button class="btn-wallet" style="margin-top:8px" onclick="document.getElementById('carteiraModal').classList.add('open')">💰 SAQUE PIX • CARTEIRA</button>
+
+<button class="btn-wallet" style="margin-top:8px" onclick="location.href='/zbank.html'">💰 SAQUE PIX • CARTEIRA</button>
 
 <!-- MODAL MINHA CONTA - COM NOME + SAIR + LOGIN VISÍVEL -->
 <div class="modal" id="contaModal"><div class="box">
@@ -126,39 +122,12 @@ body{background:#05070a;color:#fff;font-family:'Space Grotesk',sans-serif;min-he
 <!-- MODAL CARTEIRA -->
 
 <d
-<div class="modal" id="carteiraModal"><div class="box">
-  <div style="display:flex;justify-content:space-between"><h3>💳 CARTEIRA INTEGRADA • 70/30</h3><button onclick="this.closest('.modal').classList.remove('open')" style="background:none;border:none;color:#9ca3af;font-size:20px">✕</button></div>
-  
-  <div style="display:flex;gap:8px;margin:12px 0">
-    <div class="card card-green" style="height:130px;flex:1"><div class="card-label">AGROPAY • ZP$ <span class="badge badge-green">TRADING</span></div><div class="card-value" id="carteiraZP" style="font-size:24px">ZP$ 0,00</div><div class="card-sub">SALDO AGROPAY DISPONÍVEL<br>Carteira Trading • B3 Agro<br><b id="disponivelPix" style="color:#fff">Disponível Pix 70%: ZP$ 0</b></div></div>
-    <div class="card" style="height:130px;flex:1;background:linear-gradient(135deg,#facc15,#f59e0b);color:#000"><div class="card-label">ZP BANK • ZPEI POUPANÇA</div><div class="card-value" id="carteiraZBank" style="font-size:24px;color:#000">ZP$ 0,00</div><div class="card-sub" style="color:#000">SALDO ZP BANK<br>Poupança rendendo<br><b id="retidoZbank" style="color:#000">Retido 30%: ZP$ 0</b><br><b id="totalGeral" style="color:#000">Total: R$ 0</b></div></div>
-  </div>
-
-  <div style="background:#05070a;border:2px solid #00c950;border-radius:12px;padding:12px;margin:8px 0">
-    <div style="font-weight:700;color:#00c950">↗ REGRA 70/30 • SAQUE INTELIGENTE</div>
-    <div style="font-size:11px;color:#9ca3af;margin:6px 0">Quando sacar, o sistema divide automaticamente:<br><b style="color:#00c950">70% vai para seu Pix (Mercado Pago)</b> + <b style="color:#facc15">30% vai para ZP Bank (poupança)</b><br>Isso mantém o ecossistema girando e garante sustentabilidade da casa!</div>
-    <div style="display:flex;gap:6px;margin-top:8px">
-      <div style="flex:1;background:rgba(0,201,80,0.15);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#9ca3af">PIX 70%</div><div style="font-weight:800;color:#00c950" id="previewPix70">R$ 0,00</div></div>
-      <div style="flex:1;background:rgba(250,204,21,0.15);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#9ca3af">ZP BANK 30%</div><div style="font-weight:800;color:#facc15" id="previewZbank30">R$ 0,00</div></div>
-    </div>
-  </div>
-
-  <div style="background:#0a0e14;border:1px solid #1f2937;border-radius:12px;padding:12px">
-    <div style="font-weight:700">📤 Pedir Saque com Divisão 70/30</div>
-    <div style="font-size:11px;color:#9ca3af;margin:6px 0">Seu saldo <b id="saqueSaldo">ZP$ 0 = R$ 0</b> para saque. Taxa visível ZP$0.48 + 10% sobre lucro já retido. Saque Pix 70% cai no <b>painel admin /admin.html</b> com nome e chave Pix. 30% vai pro ZP Bank automaticamente!</div>
-    <div style="font-size:11px;margin-top:10px">NOME COMPLETO</div><input class="input" id="pixNome" placeholder="Ex: João Silva">
-    <div style="display:flex;gap:8px"><div style="flex:1"><div style="font-size:11px">TIPO CHAVE</div><select id="pixTipo" class="input"><option>CPF</option><option>Celular</option><option>Email</option><option>Aleatória</option></select></div><div style="flex:1.5"><div style="font-size:11px">CHAVE PIX</div><input class="input" id="pixChave" placeholder="Digite sua chave Pix"></div></div>
-    <div style="font-size:11px">VALOR TOTAL ZP$ PARA SACAR (será dividido 70/30)</div><input class="input" id="pixValor" type="number" placeholder="Ex: 1000 = 700 Pix + 300 ZBank" oninput="atualizarPreviewSaque()">
-    <div style="background:#05070a;border:1px dashed #374151;border-radius:8px;padding:8px;margin:8px 0;font-size:11px">
-      <div>Se sacar <b id="previewValorTotal">ZP$ 0</b>:</div>
-      <div>→ <b style="color:#00c950" id="previewPixFinal">ZP$ 0 (R$ 0) para seu Pix</b></div>
-      <div>→ <b style="color:#facc15" id="previewZbankFinal">ZP$ 0 para ZP Bank (poupança)</b></div>
-    </div>
-    <button onclick="pedirSaque7030()" style="width:100%;height:52px;background:linear-gradient(90deg,#00c950,#facc15);color:#000;border:none;border-radius:999px;font-weight:800;margin-top:8px">💸 SACAR COM DIVISÃO 70/30 → PIX + ZBANK</button>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <button onclick="transferirParaZbank()" style="flex:1;height:40px;background:#facc15;color:#000;border:none;border-radius:999px;font-weight:700;font-size:11px">📤 ENVIAR TUDO PRO ZBANK</button>
-      <button onclick="usarSaldoZbankModal()" style="flex:1;height:40px;background:#1f2937;color:#fff;border:1px solid #374151;border-radius:999px;font-weight:700;font-size:11px">📥 PUXAR DO ZBANK</button>
-    </div>
+<div class="modal" id="carteiraModal"><div class="box" style="max-width:100%;height:100vh;border-radius:0;margin:0;max-height:100vh">
+  <div style="text-align:center;padding:20px">
+    <h3>🏦 Carteira movida para ZBank!</h3>
+    <p style="color:#9ca3af;margin:12px 0">Sua carteira integrada 70/30 agora abre em tela cheia no ZBank!</p>
+    <button class="btn" style="background:#facc15;color:#000;width:100%;height:48px;border-radius:999px;font-weight:800" onclick="location.href='/zbank.html'">🏦 ABRIR ZBANK - TELA CHEIA</button>
+    <button style="background:none;border:1px solid #374151;color:#fff;width:100%;height:40px;border-radius:999px;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button>
   </div>
 </div></div>
 
