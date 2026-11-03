@@ -2,62 +2,59 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZP AGRO - Trading B3 Agro</title>
+<title>ZP AGRO - AO VIVO</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;padding-bottom:80px}
-.header{height:56px;background:#0a0e14;border-bottom:1px solid #1f2937;display:flex;align-items:center;justify-content:space-between;padding:0 10px;position:sticky;top:0;z-index:20}
-.logo{display:flex;align-items:center;gap:8px;font-weight:900}
-.logo-icon{width:32px;height:32px;background:#facc15;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
-.pill{background:#1f2937;color:#9ca3af;padding:6px 12px;border-radius:999px;font-size:11px;border:1px solid #374151}
-.pill-gold{background:#facc15;color:#000;font-weight:800;border:none}
-.pill-green{background:#00c950;color:#fff;font-weight:700;border:none}
-.live{color:#00c950;font-size:10px;display:flex;align-items:center;gap:4px}
-.live-dot{width:6px;height:6px;background:#00c950;border-radius:50%;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.ticker{display:flex;gap:12px;padding:8px 10px;overflow:auto;white-space:nowrap;background:#05070a;border-bottom:1px solid #1f2937;font-size:11px}
-.ticker b{color:#facc15}
+body{background:#05070a;color:#fff;font-family:Inter,sans-serif}
+.header{height:56px;background:#0a0e14;border-bottom:1px solid #1f2937;display:flex;align-items:center;justify-content:space-between;padding:0 10px;position:sticky;top:0;z-index:30}
+.logo{display:flex;align-items:center;gap:6px;font-weight:900}
+.logo-icon{width:32px;height:32px;background:#facc15;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.pill{padding:6px 12px;border-radius:999px;background:#1f2937;border:1px solid #374151;color:#9ca3af;font-size:11px;cursor:pointer}
+.pill-gold{background:#facc15;color:#000;border:none;font-weight:800}
+.pill-green{background:#00c950;color:#fff;border:none}
+.ticker{display:flex;gap:16px;padding:6px 10px;background:#05070a;border-bottom:1px solid #1f2937;font-size:11px;overflow:auto;white-space:nowrap}
+.ticker b{color:#00c950}
 .commods{display:flex;gap:8px;padding:10px;overflow:auto}
-.commod{padding:8px 14px;border-radius:999px;background:#1f2937;border:1px solid #374151;color:#9ca3af;font-size:11px;white-space:nowrap}
+.commod{padding:8px 14px;border-radius:999px;background:#1f2937;border:1px solid #374151;color:#9ca3af;font-size:11px;cursor:pointer}
 .commod.active{background:#facc15;color:#000;font-weight:800;border-color:#facc15}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
 .card{border-radius:16px;padding:12px;border:1px solid #1f2937}
 .card-green{background:#00c950;color:#fff;border:none}
-.card-label{font-size:9px;opacity:0.8;letter-spacing:1px}
+.card-label{font-size:9px;opacity:.8}
 .card-value{font-size:22px;font-weight:900;margin:6px 0}
 .chart-box{margin:10px;background:#0a0e14;border:1px solid #1f2937;border-radius:16px;padding:12px}
-.chart{width:100%;height:180px;display:block}
+.chart{width:100%;height:180px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
-.btn-action{height:56px;border-radius:14px;border:none;font-weight:800;font-size:13px}
+.btn{height:52px;border-radius:12px;border:none;font-weight:800;cursor:pointer}
 .btn-buy{background:#00c950;color:#fff}.btn-sell{background:#dc2626;color:#fff}
-.btn-wallet{background:#0a0e14;border:1px solid #1f2937;color:#fff;height:44px;border-radius:12px;font-size:11px}
-.btn-wallet-gold{background:linear-gradient(90deg,#facc15,#f59e0b);color:#000;height:44px;border-radius:12px;border:none;font-weight:800;font-size:12px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;z-index:50;align-items:center;justify-content:center;padding:16px}
+.btn-w{height:44px;border-radius:12px;background:#0a0e14;border:1px solid #1f2937;color:#fff;font-size:11px}
+.btn-w-gold{background:linear-gradient(90deg,#facc15,#f59e0b);color:#000;border:none;font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
 .modal.open{display:flex}
-.box{background:#0a0e14;border:1px solid #1f2937;border-radius:16px;padding:16px;max-width:480px;width:100%;max-height:85vh;overflow:auto}
-.input{width:100%;height:44px;background:#05070a;border:1px solid #374151;border-radius:10px;padding:0 12px;color:#fff;margin:6px 0}
+.box{background:#0f1419;border:1px solid #1f2937;border-radius:16px;padding:16px;width:100%;max-width:420px;max-height:85vh;overflow:auto}
+.input{width:100%;height:44px;background:#05070a;border:1px solid #374151;border-radius:10px;color:#fff;padding:0 12px;margin:6px 0}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo"><div class="logo-icon">ZP</div> <div>ZP<br><span style="font-size:10px;color:#9ca3af">AGRO</span></div> <div class="live" style="margin-left:8px"><div class="live-dot"></div> AO VIVO</div></div>
-  <div style="display:flex;gap:6px;overflow:auto">
-    <button class="pill" onclick="toggleMusic()" id="musicaBtn">🎵 MÚSICA</button>
+  <div class="logo"><div class="logo-icon">ZP</div><div>ZP<br>AGRO</div><div style="margin-left:6px;color:#00c950;font-size:10px">● AO VIVO</div></div>
+  <div style="display:flex;gap:6px">
+    <button class="pill" onclick="document.getElementById('musicaModal').classList.add('open')">🎵 MÚSICA</button>
     <button class="pill pill-gold" onclick="document.getElementById('creditoModal').classList.add('open')">COMPRAR CRÉDITO</button>
     <button class="pill pill-gold" onclick="location.href='/zbank.html'">🏦 ZPEI BANK</button>
-    <button class="pill" onclick="document.getElementById('contaModal').classList.add('open')">👤 MINHA CONTA</button>
+    <button class="pill" onclick="openConta()" id="btnConta">👤 MINHA CONTA</button>
   </div>
 </div>
 
-<div class="ticker" id="ticker">
-  <span>FEIJÃO <b id="tFeijao">ZP$ 182.65</b> ▲ 0.28%</span>
-  <span>ARROZ <b id="tArroz">ZP$ 95.70</b> ▲ 0.28%</span>
-  <span>TRIGO <b id="tTrigo">ZP$ 87.30</b> ▲ 0.28%</span>
-  <span>CAFÉ <b id="tCafe">ZP$ 121.50</b></span>
+<div class="ticker">
+  <span>FEIJÃO <b>ZP$ 182.65</b> ▲ 0.28%</span>
+  <span>ARROZ <b>ZP$ 95.70</b> ▲ 0.28%</span>
+  <span>TRIGO <b>ZP$ 87.30</b> ▲ 0.28%</span>
+  <span>CAFÉ <b id="tickerCafe">ZP$ 121,50</b></span>
 </div>
 
-<div class="commods" id="commods">
+<div class="commods">
   <div class="commod active" data-c="CAFE">CAFÉ</div>
   <div class="commod" data-c="FEIJAO">FEIJÃO</div>
   <div class="commod" data-c="ARROZ">ARROZ</div>
@@ -65,223 +62,159 @@ body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;paddin
   <div class="commod" data-c="MILHO">MILHO</div>
 </div>
 
-<div style="padding:0 10px;font-size:11px;color:#9ca3af">VOCÊ ESTÁ EM <b id="vocEsta" style="color:#facc15">CAFÉ</b> • ZP$ <span id="vocPreco">121,50</span> • <span id="vocStatus">Não logado</span></div>
+<div style="padding:0 10px;font-size:11px;color:#9ca3af">VOCÊ ESTÁ EM <b id="vocCafe" style="color:#facc15">CAFÉ</b> • ZP$ <span id="vocPreco">121,50</span> • <span id="vocStatus">Não logado</span></div>
 
 <div class="cards">
   <div class="card card-green">
-    <div class="card-label">SALDO <span style="background:rgba(0,0,0,0.2);padding:2px 6px;border-radius:999px">DISPONÍVEL</span></div>
-    <div class="card-value" id="saldo">ZP$ 5.000,00</div>
-    <div style="font-size:10px;opacity:0.8">Carteira ZP Agro • saque instantâneo PIX • <span id="saldoCommodity">CAFÉ</span></div>
+    <div class="card-label">SALDO <span style="background:rgba(0,0,0,.2);padding:2px 6px;border-radius:999px">DISPONÍVEL</span></div>
+    <div class="card-value" id="saldoEl">ZP$ 5.000,00</div>
+    <div style="font-size:10px;opacity:.8">Carteira ZP Agro • saque instantâneo PIX • <span id="saldoComm">CAFÉ</span></div>
   </div>
-  <div class="card" style="background:#0a0e14">
-    <div class="card-label">LUCRO HOJE • <span id="lucroCommodity">CAFÉ</span></div>
-    <div class="card-value" id="lucro" style="color:#00c950">+ZP$ 0,00</div>
-    <div style="font-size:10px;color:#9ca3af">INVESTIDO<br><span id="investido">0 sacas • Comprado por ZP$ 0,00</span></div>
+  <div class="card">
+    <div class="card-label">LUCRO HOJE • <span id="lucroComm">CAFÉ</span></div>
+    <div class="card-value" id="lucroEl" style="color:#00c950">+ZP$ 0,00</div>
+    <div style="font-size:10px;color:#9ca3af">INVESTIDO<br><span id="invEl">0 sacas • Comprado por ZP$ 0,00</span></div>
   </div>
 </div>
 
 <div class="chart-box">
   <canvas id="chart" class="chart"></canvas>
-  <div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:#9ca3af">
-    <span>Alta ZP$ <b id="alta" style="color:#fff">122,46</b></span>
-    <span>Baixa ZP$ <b id="baixa" style="color:#fff">118,29</b></span>
-    <span>Vol <b style="color:#fff">1.2k</b></span>
-    <span style="margin-left:auto">1H 1D 1S 1M • 12ms</span>
-  </div>
+  <div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:#9ca3af"><span>Alta ZP$ <b id="alta" style="color:#fff">122,46</b></span><span>Baixa ZP$ <b id="baixa" style="color:#fff">118,29</b></span><span>Vol <b style="color:#fff">1.2k</b></span><span style="margin-left:auto">1H 1D 1S 1M • 12ms</span></div>
 </div>
 
 <div class="actions">
-  <button class="btn-action btn-buy" id="btnComprar">COMPRAR CAFÉ<br><span style="font-size:10px" id="btnComprarInfo">ZP$ 121,97 • Qty 1 • fee ZP$ 0.48</span></button>
-  <button class="btn-action btn-sell" id="btnVender">VENDER CAFÉ<br><span style="font-size:10px" id="btnVenderInfo">ZP$ 121,97 • Qty 1 • fee ZP$ 0.48</span></button>
+  <button class="btn btn-buy" id="btnComprar">COMPRAR CAFÉ<br><span style="font-size:10px">ZP$ 121,97 • Qty 1 • fee ZP$ 0.48</span></button>
+  <button class="btn btn-sell" id="btnVender">VENDER CAFÉ<br><span style="font-size:10px">ZP$ 121,97 • Qty 1 • fee ZP$ 0.48</span></button>
 </div>
 
-<div class="actions" style="grid-template-columns:1fr 1fr">
-  <button class="btn-wallet" onclick="resgatar()">↗ RESGATAR PARA CARTEIRA</button>
-  <button class="btn-wallet" onclick="parar()">■ PARAR NEGOCIAÇÃO</button>
+<div class="actions">
+  <button class="btn-w" onclick="resgatar()">↗ RESGATAR PARA CARTEIRA</button>
+  <button class="btn-w" onclick="alert('Parado')">■ PARAR NEGOCIAÇÃO</button>
 </div>
 
-<div class="actions" style="grid-template-columns:1fr 1fr">
-  <button class="btn-wallet-gold" onclick="usarZbankAgro()">🏦 USAR SALDO ZBANK → AGROPAY</button>
-  <button class="btn-wallet" style="border-color:#facc15;color:#facc15" onclick="location.href='/zbank.html'">💰 ZBANK - VER CARTEIRA 70/30 (TELA CHEIA)</button>
+<div class="actions">
+  <button class="btn-w btn-w-gold" onclick="usarZbank()">🏦 USAR SALDO ZBANK → AGROPAY</button>
+  <button class="btn-w" style="border-color:#facc15;color:#facc15" onclick="location.href='/zbank.html'">💰 ZBANK - VER CARTEIRA 70/30 (TELA CHEIA)</button>
 </div>
 
-<div style="padding:10px">
-  <button class="btn-wallet" style="width:100%" onclick="document.getElementById('carteiraModalSaque').classList.add('open')">💰 SAQUE PIX • CARTEIRA</button>
-</div>
+<div style="padding:10px"><button class="btn-w" style="width:100%" onclick="location.href='/zbank.html'">💰 SAQUE PIX • CARTEIRA (ZBANK TELA CHEIA)</button></div>
 
-<!-- MODAL CONTA -->
+<!-- MODAL CONTA - IGUAL ZBANK -->
 <div class="modal" id="contaModal"><div class="box">
   <div style="display:flex;justify-content:space-between"><h3>MINHA CONTA</h3><span onclick="this.closest('.modal').classList.remove('open')" style="cursor:pointer">✕</span></div>
   <div id="areaLogado" style="display:none">
-    <div style="margin:12px 0">Bem-vindo <b id="userNome">-</b><br>Saldo: <b id="userSaldo">-</b></div>
-    <button onclick="sair()" style="background:#dc2626;color:#fff;border:none;padding:8px 12px;border-radius:8px">Sair</button>
+    <div style="margin:12px 0;background:#05070a;padding:12px;border-radius:10px;border:1px solid #1f2937">
+      <div style="font-size:10px;color:#9ca3af">LOGADO COMO</div>
+      <b id="logadoNome">-</b><br><span id="logadoEmail" style="font-size:11px;color:#9ca3af"></span><br>
+      <div style="margin-top:8px;font-size:12px">Saldo: <b id="logadoSaldo" style="color:#00c950">ZP$ 0</b></div>
+    </div>
+    <button onclick="sair()" style="width:100%;height:40px;background:#dc2626;color:#fff;border:none;border-radius:999px;font-weight:700">Sair</button>
   </div>
   <div id="areaLogin">
-    <div style="font-size:12px;margin:10px 0">🔒 ABRIR CONTA / FAZER LOGIN</div>
+    <div style="font-size:11px;color:#9ca3af;margin:10px 0">Faça login com mesma conta do ZBank</div>
     <input class="input" id="loginEmail" placeholder="Email">
     <input class="input" id="loginSenha" type="password" placeholder="Senha">
-    <button class="btn-action btn-buy" style="width:100%;height:44px" onclick="fazerLogin()">ENTRAR</button>
-    <button class="btn-action" style="width:100%;height:44px;background:#facc15;color:#000;margin-top:8px" onclick="fazerCadastro()">CADASTRAR</button>
+    <button style="width:100%;height:44px;background:#00c950;color:#fff;border:none;border-radius:999px;font-weight:800;margin-top:8px" onclick="fazerLogin()">ENTRAR</button>
+    <button style="width:100%;height:44px;background:#facc15;color:#000;border:none;border-radius:999px;font-weight:800;margin-top:8px" onclick="fazerCadastro()">CADASTRAR</button>
   </div>
 </div></div>
 
-<!-- MODAL SAQUE PIX 70/30 - Agora redireciona para ZBank tela cheia -->
-<div class="modal" id="carteiraModalSaque"><div class="box">
-  <h3>💰 Saque Pix • Carteira</h3>
-  <p style="font-size:12px;color:#9ca3af;margin:8px 0">Saque 70/30 agora é no ZBank em tela cheia!</p>
-  <button class="btn-wallet-gold" style="width:100%" onclick="location.href='/zbank.html'">🏦 ABRIR ZBANK (TELA CHEIA)</button>
-  <button class="btn-wallet" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button>
-</div></div>
-
-<!-- MODAL CREDITO -->
-<div class="modal" id="creditoModal"><div class="box">
-  <h3>COMPRAR CRÉDITO</h3>
-  <div id="pacotes"></div>
-  <button class="btn-wallet" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button>
-</div></div>
+<div class="modal" id="creditoModal"><div class="box"><h3>COMPRAR CRÉDITO</h3><div id="pacotes">Carregando...</div><button class="btn-w" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
+<div class="modal" id="musicaModal"><div class="box"><h3>🎵 Música</h3><p style="font-size:12px;color:#9ca3af">Em breve</p><button class="btn-w" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
 
 <script>
-let current='CAFE';
-let price=121.50;
-let cash=5000;
-let invested=0, avgPrice=0, lucro=0;
+let price=121.50, cash=5000, invested=0, avg=0, lucro=0, current='CAFE';
 let token=localStorage.getItem('zp_token');
-let hist=[];
-for(let i=0;i<40;i++) hist.push(118+Math.random()*4);
+let hist=[]; for(let i=0;i<40;i++) hist.push(118+Math.random()*4);
 
-function drawChart(){
-  const c=document.getElementById('chart'),ctx=c.getContext('2d');
-  const w=c.offsetWidth,h=c.offsetHeight;
-  c.width=w*2;c.height=h*2;ctx.scale(2,2);
-  ctx.clearRect(0,0,w,h);
+function draw(){
+  const c=document.getElementById('chart'),ctx=c.getContext('2d'),w=c.offsetWidth,h=c.offsetHeight;
+  c.width=w*2;c.height=h*2;ctx.scale(2,2);ctx.clearRect(0,0,w,h);
   const min=Math.min(...hist),max=Math.max(...hist);
-  ctx.beginPath();
-  hist.forEach((p,i)=>{
-    const x=i/(hist.length-1)*w;
-    const y=h-(p-min)/(max-min||1)*(h-20)-10;
-    if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
+  ctx.beginPath(); hist.forEach((p,i)=>{const x=i/(hist.length-1)*w, y=h-(p-min)/(max-min||1)*(h-20)-10; i==0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
   ctx.strokeStyle='#00c950';ctx.lineWidth=2;ctx.stroke();
-  ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle='rgba(0,201,80,0.15)';ctx.fill();
-  document.getElementById('alta').textContent=Math.max(...hist).toFixed(2);
-  document.getElementById('baixa').textContent=Math.min(...hist).toFixed(2);
+  ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle='rgba(0,201,80,.15)';ctx.fill();
+  document.getElementById('alta').textContent=max.toFixed(2);document.getElementById('baixa').textContent=min.toFixed(2);
 }
-
-function updateUI(){
-  document.getElementById('saldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
+function upd(){
+  document.getElementById('saldoEl').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
   document.getElementById('vocPreco').textContent=price.toFixed(2);
-  document.getElementById('vocEsta').textContent=current;
-  document.getElementById('lucroCommodity').textContent=current;
-  document.getElementById('saldoCommodity').textContent=current;
-  document.getElementById('lucro').textContent=(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2);
-  document.getElementById('lucro').style.color=lucro>=0?'#00c950':'#ef4444';
-  document.getElementById('investido').textContent=invested+' sacas • Comprado por ZP$ '+avgPrice.toFixed(2);
+  document.getElementById('tickerCafe').textContent='ZP$ '+price.toFixed(2);
+  document.getElementById('vocCafe').textContent=current;document.getElementById('saldoComm').textContent=current;
+  document.getElementById('lucroComm').textContent=current;
+  document.getElementById('lucroEl').textContent=(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2);
+  document.getElementById('lucroEl').style.color=lucro>=0?'#00c950':'#ef4444';
+  document.getElementById('invEl').textContent=invested+' sacas • Comprado por ZP$ '+avg.toFixed(2);
   document.getElementById('btnComprar').innerHTML=`COMPRAR ${current}<br><span style="font-size:10px">ZP$ ${price.toFixed(2)} • Qty 1 • fee ZP$ 0.48</span>`;
   document.getElementById('btnVender').innerHTML=`VENDER ${current}<br><span style="font-size:10px">ZP$ ${price.toFixed(2)} • Qty 1 • fee ZP$ 0.48</span>`;
-  document.getElementById('tCafe').textContent='ZP$ '+price.toFixed(2);
 }
-
 async function carregarMe(){
   if(!token) return;
   try{
     const r=await fetch('/api/me',{headers:{Authorization:'Bearer '+token}});
     const d=await r.json();
-    if(d.ok || d.cash_zp!=null){
-      cash=parseFloat(d.cash_zp||d.cash||5000);
-      document.getElementById('vocStatus').textContent='Logado: '+ (d.username||d.email||'');
+    if(d.cash_zp!=null || d.ok){
+      cash=parseFloat(d.cash_zp||d.portfolio?.cash_zp||5000);
+      const username=d.username||d.user?.username||d.email||'';
+      document.getElementById('vocStatus').textContent='Logado: '+username+' • ZP$ '+cash.toFixed(2);
       document.getElementById('areaLogado').style.display='block';
       document.getElementById('areaLogin').style.display='none';
-      document.getElementById('userNome').textContent=d.username||d.email;
-      document.getElementById('userSaldo').textContent='ZP$ '+cash.toFixed(2);
-      updateUI();
+      document.getElementById('logadoNome').textContent=username;
+      document.getElementById('logadoEmail').textContent=d.email||d.user?.email||'';
+      document.getElementById('logadoSaldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
+      document.getElementById('btnConta').textContent='👤 '+username;
+      upd();
     }
-  }catch(e){ console.log('me erro',e); }
+  }catch(e){console.log('me err',e)}
 }
-
+function openConta(){ document.getElementById('contaModal').classList.add('open'); carregarMe(); }
 async function fazerLogin(){
-  const email=document.getElementById('loginEmail').value;
-  const senha=document.getElementById('loginSenha').value;
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginSenha').value;
+  if(!email||!password) return alert('Email e senha');
   try{
-    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})});
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
     const d=await r.json();
     if(!r.ok) throw new Error(d.error||'Erro login');
-    token=d.token||d.session_id;
-    localStorage.setItem('zp_token',token);
-    alert('Logado! Bem-vindo '+(d.username||email)+'! Saldo: ZP$ '+(d.cash_zp||'...'));
+    token=d.token; localStorage.setItem('zp_token',token);
+    alert('Logado! Bem-vindo '+(d.user?.username||email)+'! Saldo: ZP$ '+(d.cash_zp||d.user?.cash_zp||'')); 
     document.getElementById('contaModal').classList.remove('open');
     await carregarMe();
   }catch(e){ alert('Erro: '+e.message); }
 }
-
 async function fazerCadastro(){
-  const email=document.getElementById('loginEmail').value;
-  const senha=document.getElementById('loginSenha').value;
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginSenha').value;
+  if(!email||!password) return alert('Email e senha');
   try{
-    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:senha,username:email.split('@')[0]})});
+    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,username:email.split('@')[0]})});
     const d=await r.json();
     if(!r.ok) throw new Error(d.error||'Erro cadastro');
-    token=d.token||d.session_id;
-    localStorage.setItem('zp_token',token);
+    token=d.token; localStorage.setItem('zp_token',token);
     alert('Cadastrado! Saldo: ZP$ '+(d.cash_zp||5000));
     document.getElementById('contaModal').classList.remove('open');
     await carregarMe();
   }catch(e){ alert('Erro: '+e.message); }
 }
-
 function sair(){ localStorage.removeItem('zp_token'); token=null; location.reload(); }
-
 document.getElementById('btnComprar').onclick=async()=>{
-  const qty=1; const fee=0.48;
-  if(cash < price+fee) return alert('Saldo insuficiente');
-  cash-= (price+fee);
-  const totalCost = invested*avgPrice + price;
-  invested++; avgPrice = totalCost/invested;
-  lucro = (price - avgPrice)*invested;
-  updateUI();
-  if(token){
-    try{ await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({commodity:current,qty,price,type:'BUY'})}); }catch{}
-  }
+  const fee=0.48; if(cash<price+fee) return alert('Saldo insuficiente');
+  cash-=price+fee; const total=invested*avg+price; invested++; avg=total/invested; lucro=(price-avg)*invested; upd();
+  if(token) try{ await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({commodity:current,qty:1,price,type:'BUY'})}); }catch{}
 };
-
 document.getElementById('btnVender').onclick=async()=>{
-  if(invested<=0) return alert('Nada investido');
-  cash+= (price-0.48);
-  invested--; if(invested==0) avgPrice=0;
-  lucro = invested>0 ? (price-avgPrice)*invested : 0;
-  updateUI();
-  if(token){
-    try{ await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({commodity:current,qty:1,price,type:'SELL'})}); }catch{}
-  }
+  if(invested<=0) return alert('Nada investido'); cash+=price-0.48; invested--; if(invested==0) avg=0; lucro=invested>0?(price-avg)*invested:0; upd();
+  if(token) try{ await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({commodity:current,qty:1,price,type:'SELL'})}); }catch{}
 };
-
-function resgatar(){ if(invested==0) return alert('Nada pra resgatar'); cash+= invested*price; invested=0; avgPrice=0; lucro=0; updateUI(); }
-function parar(){ alert('Negociação parada'); }
-async function usarZbankAgro(){
-  const valor = prompt('Quanto ZPay do ZBank quer puxar pro AgroPay? (veja saldo em /zbank.html)');
-  if(!valor) return;
-  const t=localStorage.getItem('zp_token');
-  if(!t) return alert('Faça login primeiro');
-  try{
-    const r=await fetch('/api/zbank/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({amount_zp:parseFloat(valor),direction:'to_agropay'})});
-    const d=await r.json();
-    if(!r.ok) throw new Error(d.error);
-    alert(d.message); cash=d.cash_agropay; updateUI();
-  }catch(e){ alert('Erro: '+e.message); }
+function resgatar(){ if(invested==0) return alert('Nada'); cash+=invested*price; invested=0; avg=0; lucro=0; upd(); }
+async function usarZbank(){
+  const v=prompt('Quanto do ZBank puxar pro AgroPay?');
+  if(!v) return; const t=localStorage.getItem('zp_token'); if(!t) return alert('Faça login');
+  try{ const r=await fetch('/api/zbank/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({amount_zp:parseFloat(v),direction:'to_agropay'})}); const d=await r.json(); if(!r.ok) throw new Error(d.error); alert(d.message); cash=d.cash_agropay; upd(); }catch(e){ alert(e.message); }
 }
-
-document.querySelectorAll('.commod').forEach(el=>{
-  el.onclick=()=>{ document.querySelectorAll('.commod').forEach(c=>c.classList.remove('active')); el.classList.add('active'); current=el.dataset.c; updateUI(); }
-});
-
-setInterval(()=>{
-  price*=1+(Math.random()-0.5)*0.008;
-  hist.push(price); if(hist.length>40) hist.shift();
-  if(invested>0) lucro=(price-avgPrice)*invested;
-  drawChart(); updateUI();
-},3000);
-
-drawChart(); updateUI(); carregarMe();
-function toggleMusic(){ alert('Música em breve'); }
+document.querySelectorAll('.commod').forEach(el=>el.onclick=()=>{document.querySelectorAll('.commod').forEach(c=>c.classList.remove('active'));el.classList.add('active');current=el.dataset.c;upd();});
+setInterval(()=>{ price*=1+(Math.random()-0.5)*0.008; hist.push(price); if(hist.length>40) hist.shift(); if(invested>0) lucro=(price-avg)*invested; draw(); upd(); },3000);
+draw();upd();carregarMe();
 </script>
 </body>
 </html>
