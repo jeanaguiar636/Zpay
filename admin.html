@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head><style>
@@ -23,317 +24,250 @@
 }
 </style>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZP Admin - Painel Completo</title>
+<title>ZP Agro - Admin Panel Completo</title>
 <style>
-body{background:#05070a;color:#fff;font-family:Space Grotesk,sans-serif;padding:12px}
-.card{background:#0a0e14;border:1px solid #1f2937;border-radius:12px;padding:12px;margin:8px 0}
-.btn{border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
-.btn-gold{background:#facc15;color:#000}.btn-green{background:#00c950;color:#fff}.btn-red{background:#dc2626;color:#fff}.btn-blue{background:#3b82f6;color:#fff}
-.input{background:#05070a;border:1px solid #374151;border-radius:8px;padding:8px 10px;color:#fff;width:100%;margin:4px 0}
-select.input{height:36px}
-table{width:100%;border-collapse:collapse;font-size:11px}
-th,td{border:1px solid #1f2937;padding:6px;text-align:left}
+body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;padding:12px;margin:0}
+.card{background:#0a0e14;border:1px solid #1f2937;border-radius:16px;padding:16px;margin:12px 0}
+.btn{border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:13px;margin:4px}
+.btn-gold{background:#facc15;color:#000}.btn-green{background:#00c950;color:#fff}.btn-blue{background:#3b82f6;color:#fff}.btn-red{background:#dc2626;color:#fff}
+.input{background:#05070a;border:1px solid #374151;border-radius:10px;color:#fff;padding:10px 12px;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border:1px solid #1f2937;padding:8px;text-align:left}
 th{background:#0f1419;color:#facc15}
-.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700}
+.badge{display:inline-block;padding:2px 6px;border-radius:999px;font-size:10px;font-weight:800}
 </style>
 </head>
 <body>
-<h2>⚙️ ZP Agro - Admin Panel Completo</h2>
+<h2 style="margin:8px 0">⚙️ ZP Agro - Admin Panel Completo</h2>
 
-}
- <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0">
-  <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#facc15,#f59e0b);color:#000">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:12px 0">
+  <div style="border-radius:20px;padding:18px;background:linear-gradient(135deg,#facc15,#f59e0b);color:#000">
     <div style="font-size:10px;font-weight:800;letter-spacing:1px">💰 INVESTIMENTO BRUTO</div>
-    <div style="font-size:28px;font-weight:900;margin:8px 0" id="brutoZp">Carregando...</div>
+    <div style="font-size:26px;font-weight:900;margin:6px 0" id="brutoZp">Carregando...</div>
     <div style="font-size:11px;opacity:.8" id="brutoBrl">R$ 0,00 • 0 Pix</div>
   </div>
-  <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff">
+  <div style="border-radius:20px;padding:18px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff">
     <div style="font-size:10px;font-weight:800;letter-spacing:1px">👛 CARTEIRA USUÁRIOS</div>
-    <div style="font-size:28px;font-weight:900;margin:8px 0" id="carteiraZp">Carregando...</div>
+    <div style="font-size:26px;font-weight:900;margin:6px 0" id="carteiraZp">Carregando...</div>
     <div style="font-size:11px;opacity:.8" id="carteiraBrl">R$ 0,00 • 0 users</div>
   </div>
-  <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#00c950,#059669);color:#fff">
+  <div style="border-radius:20px;padding:18px;background:linear-gradient(135deg,#00c950,#059669);color:#fff">
     <div style="font-size:10px;font-weight:800;letter-spacing:1px">📈 LUCRO DA PLATAFORMA</div>
-    <div style="font-size:28px;font-weight:900;margin:8px 0" id="lucroZp">Carregando...</div>
+    <div style="font-size:26px;font-weight:900;margin:6px 0" id="lucroZp">Carregando...</div>
     <div style="font-size:11px;opacity:.8" id="lucroBrl">R$ 0,00 • Lucro</div>
   </div>
 </div>
-<script>
-async function carregarDashboard(){
-  try{
-    const r=await fetch('/api/admin/dashboard');
-    const d=await r.json();
-    document.getElementById('brutoZp').textContent='ZP$ '+d.investimento_bruto.zp.toLocaleString('pt-BR');
-    document.getElementById('brutoBrl').textContent='R$ '+d.investimento_bruto.brl.toLocaleString('pt-BR',{minimumFractionDigits:2})+' • '+d.investimento_bruto.qtd_pix+' Pix';
-    document.getElementById('carteiraZp').textContent='ZP$ '+d.carteira_usuarios.zp.toLocaleString('pt-BR');
-    document.getElementById('carteiraBrl').textContent='R$ '+d.carteira_usuarios.brl.toLocaleString('pt-BR',{minimumFractionDigits:2})+' • '+d.carteira_usuarios.total_users+' users';
-    document.getElementById('lucroZp').textContent='ZP$ '+d.lucro_plataforma.zp.toLocaleString('pt-BR');
-    document.getElementById('lucroBrl').textContent='R$ '+d.lucro_plataforma.brl.toLocaleString('pt-BR',{minimumFractionDigits:2})+' • Lucro';
-  }catch(e){ console.log('Erro dashboard',e); }
-}
-carregarDashboard();
-</script>
- <div style="display:flex;gap:8px;flex-wrap:wrap">
-  <div class="card" style="flex:1;min-width:160px"><div>Usuários</div><b id="statUsers">-</b></div>
-  <div class="card" style="flex:1;min-width:160px"><div>Trades</div><b id="statTrades">-</b></div>
-  <div class="card" style="flex:1;min-width:160px"><div>Saques Pendentes</div><b id="statPend">-</b></div>
-  <div class="card" style="flex:1;min-width:160px"><div>Volume ZP$</div><b id="statVol">-</b></div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0">
+  <div class="card" style="text-align:center;margin:0"><div style="font-size:11px;color:#9ca3af">Usuários</div><div style="font-size:20px;font-weight:900" id="statUsuarios">-</div></div>
+  <div class="card" style="text-align:center;margin:0"><div style="font-size:11px;color:#9ca3af">Trades</div><div style="font-size:20px;font-weight:900" id="statTrades">-</div></div>
+  <div class="card" style="text-align:center;margin:0"><div style="font-size:11px;color:#9ca3af">Saques Pendentes</div><div style="font-size:20px;font-weight:900" id="statSaques">-</div></div>
+  <div class="card" style="text-align:center;margin:0"><div style="font-size:11px;color:#9ca3af">Total ZP$ Carteiras</div><div style="font-size:20px;font-weight:900;color:#facc15" id="statCarteiraTotal">-</div></div>
 </div>
 
-<div class="card" style="border:2px solid #00c950;background:linear-gradient(135deg,#0a0e14,#0f1f0f)">
-  <h3>🎁 Doação de Créditos - Dar ZP$ para Usuários</h3>
-  <div style="font-size:11px;color:#9ca3af;margin-bottom:8px">Escolha um usuário e doe ZP$ - cai na hora na carteira dele!</div>
+<div class="card" style="border:2px solid #facc15">
+  <h3>🎁 Doação de Créditos - Dar ZP$ para usuário</h3>
+  <div style="font-size:11px;color:#9ca3af;margin:6px 0">Selecione usuário e dê bônus ZP$</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <select id="doacaoUser" class="input" style="flex:2;min-width:200px"><option>Carregando usuários...</option></select>
-    <input id="doacaoValor" class="input" type="number" placeholder="Qtd ZP$ ex: 500" style="flex:1;min-width:120px">
-    <input id="doacaoMotivo" class="input" placeholder="Motivo: Bônus, prêmio..." style="flex:1;min-width:150px">
-    <button class="btn btn-green" onclick="doarCredito()" style="height:36px">🎁 DOAR ZP$</button>
+    <select id="doacaoUser" class="input" style="flex:1;min-width:200px"><option>Carregando usuários...</option></select>
+    <input id="doacaoValor" class="input" placeholder="Valor ZP$ ex: 500" style="width:120px">
+    <input id="doacaoMotivo" class="input" placeholder="Motivo ex: bônus" style="flex:1;min-width:150px">
+    <button class="btn btn-green" onclick="doar()">🎁 Doar</button>
   </div>
-  <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=200">+200 ZP$ (R$2)</button>
-    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=500">+500 ZP$ (R$5)</button>
-    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=1000">+1000 ZP$ (R$10)</button>
-    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=5000">+5000 ZP$ (R$50)</button>
-    <button class="btn btn-gold" onclick="document.getElementById('doacaoValor').value=10000">+10000 ZP$ (R$100)</button>
+  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-gold" onclick="carregarUsuarios()">↻ Atualizar usuários</button>
+    <button class="btn btn-gold" onclick="carregarSaques()">💸 Ver saques</button>
+    <button class="btn btn-gold" onclick="carregarPacotes()">📦 Pacotes</button>
+    <button class="btn btn-blue" onclick="carregarTudo()">📊 Atualizar tudo</button>
   </div>
   <div id="doacaoStatus" style="font-size:11px;margin-top:8px;color:#00c950"></div>
 </div>
 
 <div class="card" style="border:2px solid #facc15">
-  <h3>💳 Pacotes de ZP$ - Editar Valores de Compra (R$2 a R$100)</h3>
-  <div style="font-size:11px;color:#9ca3af;margin-bottom:8px">Crie e edite pacotes que aparecem em COMPRAR CRÉDITO. Usuário compra de R$2 a R$100!</div>
-  <button class="btn btn-blue" onclick="loadPackages()">🔄 Atualizar Pacotes</button>
-  <button class="btn btn-green" onclick="criarPacote()">➕ Novo Pacote</button>
-  <div style="overflow:auto;margin-top:8px"><table id="tblPackages"><tr><th>Label</th><th>ZP$</th><th>R$</th><th>Ativo</th><th>Ação</th></tr></table></div>
-  <div style="margin-top:10px;padding:10px;background:#05070a;border-radius:8px">
-    <div style="font-size:11px;font-weight:700;margin-bottom:6px">Adicionar/Editar Pacote Rápido:</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <input id="pkgLabel" class="input" placeholder="Ex: 200 ZP$ - Teste" style="flex:2">
-      <input id="pkgZp" class="input" type="number" placeholder="ZP$ ex: 200" style="flex:1">
-      <input id="pkgBrl" class="input" type="number" placeholder="R$ ex: 2" style="flex:1">
-      <button class="btn btn-gold" onclick="salvarPacoteRapido()">💾 Salvar Pacote</button>
+  <h3>💰 Pacotes de ZP$ - Editar Valores e R$</h3>
+  <div style="font-size:11px;color:#9ca3af;margin:6px 0">Pacotes que aparecem em COMPRAR CRÉDITO - clique em Editar ou use os botões rápidos</div>
+  <button class="btn btn-blue" onclick="carregarPacotes()">📦 Carregar pacotes</button>
+  <div style="overflow:auto;margin-top:10px"><table id="tabelaPacotes"><thead><tr><th>ZP$</th><th>Qtd</th><th>R$</th><th>✓</th><th>Ações</th></tr></thead><tbody><tr><td colspan="5">Clique carregar pacotes</td></tr></tbody></table></div>
+  <div style="margin-top:12px;padding:12px;background:#05070a;border-radius:12px;border:1px solid #1f2937">
+    <div style="font-size:12px;font-weight:800;color:#facc15">Adicionar/Editar Pacote Rápido:</div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">
+      <input id="pkgLabel" class="input" placeholder="Ex: 200 ZP$" style="width:110px">
+      <input id="pkgZp" class="input" placeholder="ZP$" style="width:70px">
+      <input id="pkgBrl" class="input" placeholder="R$ ex:2" style="width:70px">
+      <button class="btn btn-gold" onclick="salvarPacote()">💾 Salvar Pacote</button>
     </div>
-    <div style="display:flex;gap:6px;margin-top:6px">
-      <button class="btn btn-green" onclick="setPacote(200,2,'200 ZP$ - Teste')">R$2 = 200 ZP$</button>
-      <button class="btn btn-green" onclick="setPacote(500,5,'500 ZP$ - Iniciante')">R$5 = 500 ZP$</button>
-      <button class="btn btn-gold" onclick="setPacote(1000,10,'1.000 ZP$')">R$10 = 1000 ZP$</button>
-      <button class="btn btn-gold" onclick="setPacote(5000,50,'5.000 ZP$')">R$50 = 5000 ZP$</button>
-      <button class="btn btn-gold" onclick="setPacote(10000,100,'10.000 ZP$ Premium')">R$100 = 10000 ZP$</button>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn" style="background:#00c950;color:#fff" onclick="criarPacoteRapido(200,2)">R$2 = 200 ZP$</button>
+      <button class="btn" style="background:#00c950;color:#fff" onclick="criarPacoteRapido(500,5)">R$5 = 500 ZP$</button>
+      <button class="btn btn-gold" onclick="criarPacoteRapido(1000,10)">R$10 = 1000 ZP$</button>
+      <button class="btn btn-gold" onclick="criarPacoteRapido(5000,50)">R$50 = 5000 ZP$</button>
+      <button class="btn btn-gold" onclick="criarPacoteRapido(10000,100)">R$100 = 10000 ZP$</button>
     </div>
   </div>
 </div>
 
-<div class="card">
-  <h3>💰 Bônus Iniciante</h3>
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">
-    <button class="btn btn-gold" onclick="setBonus(500)">500 ZP$</button>
-    <button class="btn btn-gold" onclick="setBonus(1000)">1000 ZP$</button>
-    <button class="btn btn-gold" onclick="setBonus(5000)">5000 ZP$</button>
-    <button class="btn btn-gold" onclick="setBonus(10000)">10000 ZP$</button>
+<div class="card" style="border:2px solid #facc15;background:#05070a">
+  <h3 style="color:#facc15">💰 Bônus Iniciante</h3>
+  <div style="font-size:11px;color:#9ca3af;margin:6px 0">Quanto o novo usuário ganha ao se cadastrar (CADASTRAR amarelo). Clique no amarelo pra salvar!</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0">
+    <button class="btn btn-gold" onclick="setBonus(500)" style="padding:12px 20px;font-size:14px">500 ZP$</button>
+    <button class="btn btn-gold" onclick="setBonus(1000)" style="padding:12px 20px;font-size:14px">1000 ZP$</button>
+    <button class="btn btn-gold" onclick="setBonus(5000)" style="padding:12px 20px;font-size:14px">5000 ZP$</button>
+    <button class="btn btn-gold" onclick="setBonus(10000)" style="padding:12px 20px;font-size:14px">10000 ZP$</button>
   </div>
-  <div>Bônus atual: <b id="bonusAtual">-</b></div>
+  <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+    <span style="font-size:14px">Bônus atual:</span>
+    <span id="bonusAtual" style="font-size:20px;font-weight:900;color:#facc15">Carregando...</span>
+    <button class="btn btn-blue" onclick="carregarBonus()" style="margin-left:8px">↻ Atualizar</button>
+  </div>
+  <div id="bonusStatus" style="font-size:12px;margin-top:10px;color:#00c950;font-weight:700"></div>
+  <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+    <span style="font-size:11px;color:#9ca3af">Ou digite valor custom:</span>
+    <input id="bonusCustom" type="number" class="input" placeholder="500" style="width:90px">
+    <button class="btn btn-gold" onclick="salvarBonusCustom()">💾 Salvar</button>
+  </div>
 </div>
 
 <div class="card">
   <h3>📤 Saques Pix (com nome e chave Pix)</h3>
-  <button class="btn btn-green" onclick="loadWithdrawals()">Atualizar Saques</button>
-  <div style="overflow:auto;margin-top:8px"><table id="tblWithdrawals"><tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo Pix</th><th>Chave Pix</th><th>ZP$</th><th>R$</th><th>Status</th><th>Ação</th></tr></table></div>
+  <button class="btn btn-green" onclick="carregarSaques()">Atualizar Saques</button>
+  <div style="overflow:auto;margin-top:10px"><table id="tabelaSaques"><thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo Pix</th><th>Chave Pix</th><th>ZP$</th><th>Status</th><th>Ação</th></tr></thead><tbody><tr><td colspan="8">Clique Atualizar Saques</td></tr></tbody></table></div>
 </div>
 
 <div class="card">
-  <h3>🎁 Histórico de Doações</h3>
-  <button class="btn btn-green" onclick="loadDonations()">Atualizar Doações</button>
-  <div style="overflow:auto;margin-top:8px"><table id="tblDonations"><tr><th>Data</th><th>Email</th><th>ZP$</th><th>Motivo</th></tr></table></div>
-</div>
-
-<div class="card">
-  <h3>📊 Transações (com email)</h3>
-  <button class="btn btn-green" onclick="loadTransactions()">Atualizar Transações</button>
-  <div style="overflow:auto;margin-top:8px"><table id="tblTransactions"><tr><th>Data</th><th>Email</th><th>Usuário</th><th>Commodity</th><th>Tipo</th><th>Preço ZP$</th><th>Fee</th></tr></table></div>
-</div>
-
-<div class="card">
-  <h3>👥 Usuários (email + saldo) + Doar</h3>
-  <button class="btn btn-green" onclick="loadUsers()">Atualizar Usuários</button>
-  <div style="overflow:auto;margin-top:8px"><table id="tblUsers"><tr><th>Email</th><th>Username</th><th>Saldo ZP$</th><th>Ação</th></tr></table></div>
+  <h3>👥 Usuários • Carteira</h3>
+  <div style="overflow:auto;max-height:300px"><table id="tabelaUsers"><thead><tr><th>Email</th><th>Username</th><th>Cash AgroPay</th><th>ZBank</th><th>Ações</th></tr></thead><tbody><tr><td colspan="5">Carregando...</td></tr></tbody></table></div>
 </div>
 
 <script>
-async function apiGet(path){
-  const r=await fetch(path);
-  const d=await r.json();
-  if(!r.ok) throw new Error(d.error||'Erro');
-  return d;
-}
-async function apiPost(path, body){
-  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const d=await r.json();
-  if(!r.ok) throw new Error(d.error||'Erro');
-  return d;
-}
-async function loadStats(){
+// ===== DASHBOARD 3 CARDS TOPO =====
+async function carregarTudo(){ carregarDashboard(); carregarStatsAntigos(); carregarBonus(); }
+async function carregarDashboard(){
   try{
-    const d=await apiGet('/api/admin/stats');
-    document.getElementById('statUsers').textContent=d.stats.users;
-    document.getElementById('statTrades').textContent=d.stats.trades;
-    document.getElementById('statPend').textContent=d.stats.pending_withdrawals+' (ZP$ '+d.stats.pending_amount_zp+')';
-    document.getElementById('statVol').textContent='ZP$ '+d.stats.volume_zp;
-  }catch(e){console.log(e)}
+    const r=await fetch('/api/admin/dashboard'); const d=await r.json(); if(!r.ok) throw new Error(d.error);
+    document.getElementById('brutoZp').textContent='ZP$ '+(d.investimento_bruto?.zp||0).toLocaleString('pt-BR');
+    document.getElementById('brutoBrl').textContent='R$ '+(d.investimento_bruto?.brl||0).toLocaleString('pt-BR',{minimumFractionDigits:2})+' • '+(d.investimento_bruto?.qtd_pix||0)+' Pix';
+    document.getElementById('carteiraZp').textContent='ZP$ '+(d.carteira_usuarios?.zp||0).toLocaleString('pt-BR');
+    document.getElementById('carteiraBrl').textContent='R$ '+(d.carteira_usuarios?.brl||0).toLocaleString('pt-BR',{minimumFractionDigits:2})+' • '+(d.carteira_usuarios?.total_users||0)+' users';
+    document.getElementById('lucroZp').textContent='ZP$ '+(d.lucro_plataforma?.zp||0).toLocaleString('pt-BR');
+    document.getElementById('lucroBrl').textContent='R$ '+(d.lucro_plataforma?.brl||0).toLocaleString('pt-BR',{minimumFractionDigits:2})+' • Lucro';
+    if(d.stats){ document.getElementById('statUsuarios').textContent=d.stats.users||0; document.getElementById('statTrades').textContent=d.stats.trades||0; document.getElementById('statSaques').textContent=d.stats.pending_withdrawals||0; }
+    if(d.carteira_usuarios) document.getElementById('statCarteiraTotal').textContent='ZP$ '+(d.carteira_usuarios.zp||0).toLocaleString('pt-BR');
+  }catch(e){ console.log(e); }
 }
-async function loadBonus(){
+async function carregarStatsAntigos(){
+  try{ const r=await fetch('/api/admin/stats'); const d=await r.json(); document.getElementById('statUsuarios').textContent=d.stats?.users||0; document.getElementById('statTrades').textContent=d.stats?.trades||0; document.getElementById('statSaques').textContent=d.stats?.pending_withdrawals||0; document.getElementById('statCarteiraTotal').textContent='ZP$ '+(d.stats?.volume_zp||0).toLocaleString('pt-BR'); }catch(e){}
+}
+
+// ===== BÔNUS INICIANTE - FIX BOTÕES AMARELOS =====
+async function carregarBonus(){
   try{
-    const d=await apiGet('/api/admin/config');
-    const b=d.config.find(c=>c.key==='bonus_iniciante');
-    if(b) document.getElementById('bonusAtual').textContent='ZP$ '+b.value;
-  }catch{}
-}
-async function setBonus(v){
-  await apiPost('/api/admin/config',{key:'bonus_iniciante', value:''+v});
-  alert('Bônus iniciante agora ZP$ '+v);
-  loadBonus();
-}
-async function loadWithdrawals(){
-  try{
-    const d=await apiGet('/api/admin/withdrawals');
-    const tbl=document.getElementById('tblWithdrawals');
-    tbl.innerHTML='<tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo Pix</th><th>Chave Pix</th><th>ZP$</th><th>R$</th><th>Status</th><th>Ação</th></tr>';
-    (d.withdrawals||[]).forEach(w=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${w.created_at||''}</td><td>${w.name||''}</td><td>${w.email||''}</td><td>${w.pix_type||''}</td><td style="color:#facc15">${w.pix_key||''}</td><td>${w.amount_zp||''}</td><td>R$ ${w.amount_brl||''}</td><td>${w.status||''}</td><td><button class="btn btn-green" onclick="aprovarSaque('${w.id}','pago')">Pago</button></td>`;
-      tbl.appendChild(tr);
-    });
-  }catch(e){alert('Erro saques: '+e.message)}
-}
-async function aprovarSaque(id,status){
-  await apiPost('/api/admin/withdrawals/approve',{id,status});
-  alert('Saque '+status);
-  loadWithdrawals();
-}
-async function loadTransactions(){
-  try{
-    const d=await apiGet('/api/admin/transactions');
-    const tbl=document.getElementById('tblTransactions');
-    tbl.innerHTML='<tr><th>Data</th><th>Email</th><th>Usuário</th><th>Commodity</th><th>Tipo</th><th>Preço ZP$</th><th>Fee</th></tr>';
-    (d.transactions||d.trades||[]).forEach(t=>{
-      const tr=document.createElement('tr');
-      const color=t.type==='BUY'?'#00c950':'#dc2626';
-      tr.innerHTML=`<td>${t.created_at||''}</td><td>${t.email||''}</td><td>${t.username||''}</td><td>${t.commodity||''}</td><td style="color:${color}">${t.type||''}</td><td>ZP$ ${t.price_zp||''}</td><td>ZP$ ${t.fee_zp||''}</td>`;
-      tbl.appendChild(tr);
-    });
-  }catch(e){alert('Erro transacoes: '+e.message)}
-}
-async function loadUsers(){
-  try{
-    const d=await apiGet('/api/admin/users');
-    const tbl=document.getElementById('tblUsers');
-    const sel=document.getElementById('doacaoUser');
-    tbl.innerHTML='<tr><th>Email</th><th>Username</th><th>Saldo ZP$</th><th>Ação</th></tr>';
-    sel.innerHTML='<option value="">Escolha usuário...</option>';
-    (d.users||[]).forEach(u=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${u.email||''}</td><td>${u.username||''}</td><td>ZP$ ${u.cash_zp||0}</td><td><button class="btn btn-blue" onclick="prepararDoacao('${u.id}','${u.email}')">🎁 Doar</button> <button class="btn btn-red" onclick="bloquear('${u.id}')">Bloquear</button></td>`;
-      tbl.appendChild(tr);
-      const opt=document.createElement('option');
-      opt.value=u.id;
-      opt.textContent=(u.email||u.username)+' - ZP$ '+(u.cash_zp||0);
-      sel.appendChild(opt);
-    });
-  }catch(e){alert('Erro users: '+e.message)}
-}
-function prepararDoacao(userId, email){
-  document.getElementById('doacaoUser').value=userId;
-  document.getElementById('doacaoMotivo').value='Doação para '+email;
-  window.scrollTo(0,0);
-  document.getElementById('doacaoValor').focus();
-}
-async function doarCredito(){
-  const user_id=document.getElementById('doacaoUser').value;
-  const amount=document.getElementById('doacaoValor').value;
-  const reason=document.getElementById('doacaoMotivo').value||'Doação admin';
-  if(!user_id) return alert('Escolha usuário!');
-  if(!amount) return alert('Digite valor ZP$!');
-  if(!confirm(`Doar ZP$ ${amount} para usuário?`)) return;
-  try{
-    const d=await apiPost('/api/admin/users',{user_id, amount, action:'donate', reason});
-    document.getElementById('doacaoStatus').textContent=`✅ Doado ZP$ ${amount}! Novo saldo ZP$ ${d.new_cash}`;
-    alert(`Doado ZP$ ${amount}! Novo saldo ZP$ ${d.new_cash}`);
-    loadUsers(); loadDonations();
-  }catch(e){alert('Erro doação: '+e.message)}
-}
-async function bloquear(user_id){
-  if(!confirm('Bloquear usuário?')) return;
-  await apiPost('/api/admin/users',{user_id, action:'block'});
-  alert('Bloqueado');
-  loadUsers();
-}
-async function loadPackages(){
-  try{
-    const d=await apiGet('/api/admin/packages');
-    const tbl=document.getElementById('tblPackages');
-    tbl.innerHTML='<tr><th>Label</th><th>ZP$</th><th>R$</th><th>Ativo</th><th>Ação</th></tr>';
-    (d.packages||[]).forEach(p=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${p.label||''}</td><td>${p.amount_zp||''}</td><td>R$ ${p.amount_brl||''}</td><td>${p.active?'✅':''}</td><td><button class="btn btn-blue" onclick="editarPacote('${p.id}',${p.amount_zp},${p.amount_brl},'${p.label}')">Editar</button> <button class="btn btn-red" onclick="deletarPacote('${p.id}')">Excluir</button></td>`;
-      tbl.appendChild(tr);
-    });
-  }catch(e){alert('Erro pacotes: '+e.message)}
-}
-function setPacote(zp,brl,label){
-  document.getElementById('pkgZp').value=zp;
-  document.getElementById('pkgBrl').value=brl;
-  document.getElementById('pkgLabel').value=label;
-}
-function editarPacote(id,zp,brl,label){
-  document.getElementById('pkgZp').value=zp;
-  document.getElementById('pkgBrl').value=brl;
-  document.getElementById('pkgLabel').value=label;
-  document.getElementById('pkgLabel').dataset.editId=id;
-  window.scrollTo(0,200);
-}
-async function salvarPacoteRapido(){
-  const zp=parseFloat(document.getElementById('pkgZp').value);
-  const brl=parseFloat(document.getElementById('pkgBrl').value);
-  const label=document.getElementById('pkgLabel').value;
-  const editId=document.getElementById('pkgLabel').dataset.editId;
-  if(!zp||!brl||!label) return alert('Preencha ZP$, R$ e Label!');
-  try{
-    if(editId){
-      await apiPost('/api/admin/packages',{id:editId, amount_zp:zp, amount_brl:brl, label, active:1});
-      delete document.getElementById('pkgLabel').dataset.editId;
-    }else{
-      await apiPost('/api/admin/packages',{amount_zp:zp, amount_brl:brl, label, active:1});
+    document.getElementById('bonusAtual').textContent='Carregando...';
+    const r=await fetch('/api/admin/config');
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error);
+    const cfg=d.config||[];
+    const bonus=cfg.find(c=>c.key==='bonus_iniciante');
+    if(bonus && bonus.value){
+      document.getElementById('bonusAtual').textContent='ZP$ '+bonus.value;
+      document.getElementById('bonusStatus').textContent='✅ Bônus atual salvo no banco: ZP$ '+bonus.value;
+    } else {
+      document.getElementById('bonusAtual').textContent='ZP$ 5000 (padrão)';
+      document.getElementById('bonusStatus').textContent='ℹ️ Nenhum bônus configurado, usando padrão 5000. Clique num amarelo pra salvar!';
     }
-    alert('Pacote salvo! '+label+' - R$'+brl+' = '+zp+' ZP$');
-    document.getElementById('pkgZp').value=''; document.getElementById('pkgBrl').value=''; document.getElementById('pkgLabel').value='';
-    loadPackages();
-  }catch(e){alert('Erro: '+e.message)}
+  }catch(e){
+    document.getElementById('bonusAtual').textContent='Erro: '+e.message;
+    document.getElementById('bonusStatus').textContent='❌ Erro ao carregar: '+e.message+' - Verifique se criou functions/api/admin/config/index.js';
+  }
 }
-async function criarPacote(){
-  const zp=prompt('Quantos ZP$? ex: 200');
-  const brl=prompt('Quantos R$? ex: 2');
-  const label=prompt('Label? ex: 200 ZP$ - Teste');
-  if(!zp||!brl) return;
-  await apiPost('/api/admin/packages',{amount_zp:parseFloat(zp), amount_brl:parseFloat(brl), label:label||zp+' ZP$', active:1});
-  loadPackages();
-}
-async function deletarPacote(id){
-  if(!confirm('Excluir pacote?')) return;
-  await apiPost('/api/admin/packages',{id, action:'delete'});
-  loadPackages();
-}
-async function loadDonations(){
+
+async function setBonus(valor){
+  // Essa função é chamada pelos botões amarelos 500, 1000, 5000, 10000
   try{
-    const d=await apiGet('/api/admin/donations');
-    const tbl=document.getElementById('tblDonations');
-    tbl.innerHTML='<tr><th>Data</th><th>Email</th><th>ZP$</th><th>Motivo</th></tr>';
-    (d.donations||[]).forEach(x=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${x.created_at||''}</td><td>${x.email||x.username||x.user_id||''}</td><td style="color:#00c950">+ZP$ ${x.amount_zp||''}</td><td>${x.reason||''}</td>`;
-      tbl.appendChild(tr);
+    document.getElementById('bonusAtual').textContent='Salvando ZP$ '+valor+'...';
+    document.getElementById('bonusStatus').textContent='⏳ Salvando bônus ZP$ '+valor+'...';
+    
+    const r=await fetch('/api/admin/config', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({key:'bonus_iniciante', value: valor.toString()})
     });
-  }catch(e){console.log(e)}
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error);
+    
+    document.getElementById('bonusAtual').textContent='ZP$ '+valor;
+    document.getElementById('bonusStatus').textContent='✅ BÔNUS SALVO! Agora todo novo cadastro ganha ZP$ '+valor+'! 🎉';
+    
+    // Feedback visual
+    try{ navigator.vibrate(100); }catch{}
+    
+    // Mostra alerta
+    // alert('✅ Bônus iniciante agora é ZP$ '+valor+'!');
+    
+  }catch(e){
+    document.getElementById('bonusStatus').textContent='❌ Erro ao salvar: '+e.message;
+    alert('Erro ao salvar bônus: '+e.message+'\nVerifique se a API config existe em functions/api/admin/config/index.js');
+  }
 }
-loadStats(); loadBonus(); loadWithdrawals(); loadTransactions(); loadUsers(); loadPackages(); loadDonations();
+
+function salvarBonusCustom(){
+  const v=document.getElementById('bonusCustom').value;
+  if(!v || parseInt(v)<=0) return alert('Digite um valor válido! Ex: 500');
+  setBonus(parseInt(v));
+}
+
+// ===== USUÁRIOS, PACOTES, SAQUES =====
+async function carregarUsuarios(){
+  try{
+    const r=await fetch('/api/admin/users'); const d=await r.json(); const users=d.users||[];
+    const sel=document.getElementById('doacaoUser'); sel.innerHTML='';
+    users.forEach(u=>{ const opt=document.createElement('option'); opt.value=u.id; opt.textContent=(u.email||u.username||u.id)+' - ZP$ '+(u.cash_zp||0); sel.appendChild(opt); });
+    const tbody=document.querySelector('#tabelaUsers tbody'); tbody.innerHTML='';
+    users.slice(0,50).forEach(u=>{ const tr=document.createElement('tr'); tr.innerHTML='<td>'+(u.email||'')+'</td><td>'+(u.username||'')+'</td><td>ZP$ '+(u.cash_zp||0)+'</td><td>ZP$ '+(u.savings_zp||u.cash_zp||0)+'</td><td><button class="btn btn-gold" onclick="document.getElementById(\'doacaoUser\').value=\''+u.id+'\'">Selecionar</button></td>'; tbody.appendChild(tr); });
+  }catch(e){ alert(e.message); }
+}
+async function doar(){
+  const user_id=document.getElementById('doacaoUser').value; const amount=document.getElementById('doacaoValor').value; const reason=document.getElementById('doacaoMotivo').value;
+  if(!user_id||!amount) return alert('Selecione user e valor');
+  try{ const r=await fetch('/api/admin/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id,amount,action:'donate',reason})}); const d=await r.json(); if(!r.ok) throw new Error(d.error); document.getElementById('doacaoStatus').textContent='✅ Doado ZP$ '+amount+'!'; carregarUsuarios(); carregarTudo(); }catch(e){ alert(e.message); }
+}
+async function carregarPacotes(){
+  try{
+    const r=await fetch('/api/packages'); const d=await r.json(); const packs=d.packages||[];
+    const tbody=document.querySelector('#tabelaPacotes tbody'); tbody.innerHTML='';
+    packs.forEach(p=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td>'+(p.label||p.amount_zp+' ZP$')+'</td><td>'+p.amount_zp+'</td><td>R$ '+p.amount_brl+'</td><td>✅</td><td><button class="btn btn-blue" onclick="editarPacote('+p.amount_zp+','+p.amount_brl+',\''+(p.label||'')+'\','+p.id+')">Editar</button> <button class="btn btn-red" onclick="deletarPacote('+p.id+')">Excluir</button></td>';
+      tbody.appendChild(tr);
+    });
+  }catch(e){ alert(e.message); }
+}
+function editarPacote(zp, brl, label, id){ document.getElementById('pkgZp').value=zp; document.getElementById('pkgBrl').value=brl; document.getElementById('pkgLabel').value=label; window.editingId=id; }
+async function salvarPacote(){
+  const amount_zp=parseFloat(document.getElementById('pkgZp').value); const amount_brl=parseFloat(document.getElementById('pkgBrl').value); const label=document.getElementById('pkgLabel').value;
+  if(!amount_zp||!amount_brl) return alert('ZP$ e R$ obrigatórios');
+  try{
+    const body={amount_zp,amount_brl,label}; if(window.editingId) body.id=window.editingId;
+    const r=await fetch('/api/admin/packages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); const d=await r.json(); if(!r.ok) throw new Error(d.error);
+    window.editingId=null; document.getElementById('pkgZp').value=''; document.getElementById('pkgBrl').value=''; document.getElementById('pkgLabel').value=''; carregarPacotes();
+  }catch(e){ alert(e.message); }
+}
+function criarPacoteRapido(zp, brl){ document.getElementById('pkgZp').value=zp; document.getElementById('pkgBrl').value=brl; document.getElementById('pkgLabel').value=zp+' ZP$'; salvarPacote(); }
+async function deletarPacote(id){ if(!confirm('Excluir pacote '+id+'?')) return; try{ await fetch('/api/admin/packages?id='+id,{method:'DELETE'}); carregarPacotes(); }catch(e){ alert(e.message); } }
+async function carregarSaques(){
+  try{
+    const r=await fetch('/api/admin/withdrawals'); const d=await r.json(); const saques=d.withdrawals||[];
+    const tbody=document.querySelector('#tabelaSaques tbody'); tbody.innerHTML='';
+    saques.forEach(s=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td>'+(s.created_at||'').substring(0,19)+'</td><td>'+(s.name||'')+'</td><td>'+(s.email||'')+'</td><td>'+(s.pix_type||s.pix_key_type||'')+'</td><td style="color:#facc15">'+(s.pix_key||'')+'</td><td>ZP$ '+(s.amount_zp||0)+'</td><td>'+s.status+'</td><td><button class="btn btn-green" onclick="aprovarSaque(\''+s.id+'\')">✅ Pago</button></td>';
+      tbody.appendChild(tr);
+    });
+  }catch(e){ alert(e.message); }
+}
+async function aprovarSaque(id){ try{ const r=await fetch('/api/admin/withdrawals/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status:'pago'})}); const d=await r.json(); if(!r.ok) throw new Error(d.error); carregarSaques(); carregarTudo(); }catch(e){ alert(e.message); } }
+
+carregarTudo(); carregarUsuarios(); carregarPacotes(); carregarSaques();
 </script>
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
