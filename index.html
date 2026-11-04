@@ -264,40 +264,7 @@ async function abrirCredito(){
     div.innerHTML='<div style="color:#ef4444;font-size:12px">Erro: '+e.message+'<br><br>Pacotes padrão:<br><button class="btn-w btn-w-gold" style="width:100%;margin-top:8px" onclick="comprarPacote(2,200)">200 ZP$ - R$2</button><button class="btn-w btn-w-gold" style="width:100%;margin-top:8px" onclick="comprarPacote(5,500)">500 ZP$ - R$5</button></div>';
   }
 }
-
-async function comprarPacote(brl,zp){
-  const t=localStorage.getItem('zp_token');
-  if(!t) return alert('Faça login primeiro em MINHA CONTA!');
-  if(!confirm('Comprar '+zp+' ZP$ por R$'+brl+' via Pix Mercado Pago?')) return;
-  try{
-    const r=await fetch('/api/credits/create-pix',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({amount_zp:zp})});
-    const d=await r.json();
-    if(!r.ok) throw new Error(d.error||'Erro');
-    if(d.mode==='teste'){
-      alert('✅ Pedido criado em MODO TESTE!\nZP$ '+zp+' = R$'+brl+'\n\n'+d.message+'\n\nPara ativar Pix real, vá em Cloudflare > Zpay > Settings > Variables > MP_ACCESS_TOKEN');
-      // Em teste, credita direto pra você testar ZBank 70/30
-      if(confirm('Creditar ZP$ '+zp+' agora em modo teste para testar ZBank?')){
-        cash+=zp; upd(); alert('Creditado! Agora você tem ZP$ '+cash+'. Vá em ZBANK e teste GUARDAR NO ZBANK!');
-      }
-      return;
-    }
-    // Modo real - mostra QR Pix
-    const win=window.open('','_blank','width=400,height=600');
-    win.document.write(`
-      <html><head><title>Pix R$${brl} - ${zp} ZP$</title></head><body style="font-family:sans-serif;text-align:center;padding:20px;background:#05070a;color:#fff">
-        <h2>Pix R$${brl} = ${zp} ZP$</h2>
-        <p>Escaneie o QR no banco</p>
-        ${d.pix_qr_base64?`<img src="data:image/png;base64,${d.pix_qr_base64}" style="width:250px">`:''}
-        <p style="word-break:break-all;font-size:10px;background:#0a0e14;padding:10px;border-radius:8px;margin-top:10px">${d.pix_code||''}</p>
-        <p style="font-size:11px;color:#9ca3af">Após pagar, saldo entra automático! Feche e volte pro AgroPay.</p>
-        <button onclick="window.close()" style="margin-top:12px;padding:10px 20px;background:#facc15;border:none;border-radius:999px;font-weight:800">Fechar</button>
-      
-<div class="modal" id="pixModal"><div class="box" style="max-width:480px;width:95%;max-height:95vh;overflow:auto"><div id="pixContent">Carregando Pix...</div></div></div>
-</body></html>
-    `);
-  }catch(e){ alert('Erro: '+e.message); }
-}
-
+function comprarPacote(brl,zp){ alert('Checkout Pix R$'+brl+' = '+zp+' ZP$ - Mercado Pago em breve!'); }
 
 document.getElementById('btnComprar').onclick=async()=>{
   const fee=0.48; if(cash<price+fee) return alert('Saldo insuficiente');
@@ -318,7 +285,5 @@ document.querySelectorAll('.commod').forEach(el=>el.onclick=()=>{document.queryS
 setInterval(()=>{ price*=1+(Math.random()-0.5)*0.008; hist.push(price); if(hist.length>40) hist.shift(); if(invested>0) lucro=(price-avg)*invested; draw(); upd(); },3000);
 draw();upd();carregarMe();
 </script>
-
-<div class="modal" id="pixModal"><div class="box" style="max-width:480px;width:95%;max-height:95vh;overflow:auto"><div id="pixContent">Carregando Pix...</div></div></div>
-</body>
+<div class="modal" id="pixModal"><div class="box" style="max-width:480px;width:95%;max-height:95vh;overflow:auto"><div id="pixContent">Carregando Pix...</div></div></div></body>
 </html>
