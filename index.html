@@ -67,7 +67,7 @@ body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;paddin
   <div class="card"><div class="card-label">LUCRO HOJE • <span id="lucroComm">CAFÉ</span></div><div class="card-value" id="lucroEl" style="color:#00c950">+ZP$ 0,00</div><div style="font-size:10px;color:#9ca3af"><span id="invEl">0 sacas • Comprado por ZP$ 0,00</span></div></div>
 </div>
 
-<div class="chart-box"><canvas id="chart" class="chart"></canvas><div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:#9ca3af"><span>Alta ZP$ <b id="alta" style="color:#fff">122,46</b></span><span>Baixa ZP$ <b id="baixa" style="color:#fff">118,29</b></span><span>Vol <b style="color:#fff">1.2k</b></span><span style="margin-left:auto">1H 1D 1S 1M • <span id="statusNeg">AO VIVO</span></span></div></div>
+<div class="chart-box"><canvas id="chart" class="chart"></canvas><div id="riskInfo" style="margin-top:8px;padding:8px;background:#05070a;border:1px solid #1f2937;border-radius:8px;font-size:11px;text-align:center">Compre para ver risco azul vs vermelho</div><div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:#9ca3af"><span>Alta ZP$ <b id="alta" style="color:#fff">122,46</b></span><span>Baixa ZP$ <b id="baixa" style="color:#fff">118,29</b></span><span>Vol <b style="color:#fff">1.2k</b></span><span style="margin-left:auto">1H 1D 1S 1M • <span id="statusNeg">AO VIVO</span></span></div></div>
 
 <div class="actions"><button class="btn btn-buy" id="btnComprar">COMPRAR CAFÉ</button><button class="btn btn-sell" id="btnVender">VENDER CAFÉ</button></div>
 
@@ -95,16 +95,44 @@ let hist=[]; for(let i=0;i<50;i++) hist.push(118+Math.random()*4 + Math.sin(i/5)
 let negociando=true;
 let intervalo=null;
 
+
 function draw(){
   const c=document.getElementById('chart'); if(!c) return;
   const ctx=c.getContext('2d'); const rect=c.getBoundingClientRect(); const w=rect.width||320; const h=180;
   c.width=w*2; c.height=h*2; c.style.width=w+'px'; c.style.height=h+'px'; ctx.scale(2,2); ctx.clearRect(0,0,w,h);
   ctx.strokeStyle='#1f2937'; ctx.lineWidth=0.5; for(let i=0;i<4;i++){ ctx.beginPath(); ctx.moveTo(0,i*h/4); ctx.lineTo(w,i*h/4); ctx.stroke(); }
-  const min=Math.min(...hist),max=Math.max(...hist),range=max-min||1;
-  ctx.beginPath(); hist.forEach((p,i)=>{ const x=i/(hist.length-1)*w; const y=h-(p-min)/range*(h-20)-10; i==0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fillStyle='rgba(0,201,80,0.15)'; ctx.fill();
-  ctx.beginPath(); hist.forEach((p,i)=>{ const x=i/(hist.length-1)*w; const y=h-(p-min)/range*(h-20)-10; i==0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.strokeStyle=negociando?'#00c950':'#6b7280'; ctx.lineWidth=2; ctx.stroke();
+  const min=Math.min(...hist, avg>0?avg:9999),max=Math.max(...hist, avg>0?avg:0),range=max-min||1;
+  // area profit
+  ctx.beginPath(); hist.forEach((p,i)=>{ const x=i/(hist.length-1)*w; const y=h-(p-min)/range*(h-20)-10; i==0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+  if(invested>0 && price>avg){ ctx.fillStyle='rgba(0,201,80,0.18)'; } else if(invested>0 && price<avg){ ctx.fillStyle='rgba(239,68,68,0.18)'; } else { ctx.fillStyle='rgba(0,201,80,0.12)'; }
+  ctx.fill();
+  // line green
+  ctx.beginPath(); hist.forEach((p,i)=>{ const x=i/(hist.length-1)*w; const y=h-(p-min)/range*(h-20)-10; i==0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.strokeStyle=negociando?(invested>0 && price<avg?'#ef4444':'#00c950'):'#6b7280'; ctx.lineWidth=2.2; ctx.stroke();
+  // RISCO AZUL = preço de compra (entry)
+  if(avg>0 && invested>0){
+    const yBlue = h-(avg-min)/range*(h-20)-10;
+    ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='#3b82f6'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(0,yBlue); ctx.lineTo(w,yBlue); ctx.stroke(); ctx.restore();
+    ctx.fillStyle='#3b82f6'; ctx.font='bold 10px sans-serif'; ctx.fillText('AZUL COMPRA: ZP$ '+avg.toFixed(2), 6, yBlue-4);
+  }
+  // RISCO VERMELHO = preço atual
+  if(price>0){
+    const yRed = h-(price-min)/range*(h-20)-10;
+    ctx.save(); ctx.setLineDash([2,4]); ctx.strokeStyle='#ef4444'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,yRed); ctx.lineTo(w,yRed); ctx.stroke(); ctx.restore();
+  }
   document.getElementById('alta').textContent=max.toFixed(2); document.getElementById('baixa').textContent=min.toFixed(2);
+  // Update risk explanation
+  const riskInfo = document.getElementById('riskInfo');
+  if(riskInfo){
+    if(invested>0){
+      if(price>avg){ riskInfo.innerHTML='<span style="color:#00c950">🟢 GANHANDO! Gráfico ACIMA do azul ( '+price.toFixed(2)+' > '+avg.toFixed(2)+' ) = +ZP$ '+(lucro>0?lucro.toFixed(2):'0')+'</span>'; }
+      else if(price<avg){ riskInfo.innerHTML='<span style="color:#ef4444">🔴 PERDENDO! Gráfico ABAIXO do azul ( '+price.toFixed(2)+' < '+avg.toFixed(2)+' ) = '+lucro.toFixed(2)+'</span>'; }
+      else{ riskInfo.innerHTML='<span style="color:#9ca3af">⚪ Empatado no azul</span>'; }
+    }else{
+      riskInfo.innerHTML='<span style="color:#9ca3af">Compre para ver risco azul (entrada) vs vermelho (atual)</span>';
+    }
+  }
 }
+
 
 function upd(){
   document.getElementById('saldoEl').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
