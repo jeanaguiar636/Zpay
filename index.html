@@ -128,7 +128,7 @@ body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;paddin
   <div style="margin-top:10px;font-size:10px;color:#9ca3af">Pacotes R$2 R$5 R$10 R$50 R$100 • 1 ZP$ = R$0,01</div>
 </div></div>
 
-<div class="modal" id="musicaModal"><div class="box"><h3>🎵 Música</h3><p style="font-size:12px;color:#9ca3af">Em breve</p><button class="btn-w" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
+<div class="modal" id="musicaModal"><div class="box"><h3>🎵 Música</h3><p style="font-size:12px;color:#9ca3af"></p><button class="btn-w" style="width:100%;margin-top:8px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
 
 <script>
 let price=121.50, cash=5000, invested=0, avg=0, lucro=0, current='CAFE';
@@ -264,13 +264,7 @@ async function abrirCredito(){
     div.innerHTML='<div style="color:#ef4444;font-size:12px">Erro: '+e.message+'<br><br>Pacotes padrão:<br><button class="btn-w btn-w-gold" style="width:100%;margin-top:8px" onclick="comprarPacote(2,200)">200 ZP$ - R$2</button><button class="btn-w btn-w-gold" style="width:100%;margin-top:8px" onclick="comprarPacote(5,500)">500 ZP$ - R$5</button></div>';
   }
 }
-function comprarPacote(brl,zp){ alert('Checkout Pix R$'+brl+' = '+zp+' ZP$ - Mercado Pago em breve!'); }
-
-document.getElementById('btnComprar').onclick=async()=>{
-  const fee=0.48; if(cash<price+fee) return alert('Saldo insuficiente');
-  cash-=price+fee; const total=invested*avg+price; invested++; avg=total/invested; lucro=(price-avg)*invested; upd();
-  if(token) try{ await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({commodity:current,qty:1,price,type:'BUY'})}); }catch{}
-};
+;
 document.getElementById('btnVender').onclick=async()=>{
   if(invested<=0) return alert('Nada investido'); cash+=price-0.48; invested--; if(invested==0) avg=0; lucro=invested>0?(price-avg)*invested:0; upd();
   if(token) try{ await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({commodity:current,qty:1,price,type:'SELL'})}); }catch{}
@@ -284,6 +278,62 @@ async function usarZbank(){
 document.querySelectorAll('.commod').forEach(el=>el.onclick=()=>{document.querySelectorAll('.commod').forEach(c=>c.classList.remove('active'));el.classList.add('active');current=el.dataset.c;upd();});
 setInterval(()=>{ price*=1+(Math.random()-0.5)*0.008; hist.push(price); if(hist.length>40) hist.shift(); if(invested>0) lucro=(price-avg)*invested; draw(); upd(); },3000);
 draw();upd();carregarMe();
+
+async function comprarPacote(brl,zp){
+  const t=localStorage.getItem('zp_token');
+  if(!t) return alert('Faça login primeiro em MINHA CONTA!');
+  try{
+    const r=await fetch('/api/credits/create-pix',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({amount_zp:zp})});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||'Erro');
+    if(d.mode==='teste'){
+      if(confirm('Modo teste: Creditar ZP$ '+zp+' agora?')){ cash+=zp; upd(); alert('Creditado! Saldo: ZP$ '+cash); }
+      return;
+    }
+    const modal=document.getElementById('pixModal');
+    const cont=document.getElementById('pixContent');
+    cont.innerHTML=`
+      <div style="text-align:center;padding:10px">
+        <div style="background:#00c950;color:#fff;padding:8px 12px;border-radius:999px;font-size:11px;font-weight:800;display:inline-block;margin-bottom:12px">PIX AO VIVO • MERCADO PAGO</div>
+        <h2 style="font-size:24px">Pix R$${brl} = ${zp} ZP$</h2>
+        <p style="font-size:12px;color:#9ca3af;margin-bottom:16px">QR GIGANTE - escaneie no banco</p>
+        <div style="background:#fff;padding:20px;border-radius:20px;display:inline-block;margin-bottom:16px">
+          ${d.pix_qr_base64?`<img src="data:image/png;base64,${d.pix_qr_base64}" style="width:360px;height:360px;display:block">`:`<div style="width:360px;height:360px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#000">QR CODE</div>`}
+        </div>
+        <div style="background:#0a0e14;border:1px solid #1f2937;border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-size:10px;color:#9ca3af">COPIA E COLA:</div>
+          <div style="word-break:break-all;font-size:11px;background:#05070a;padding:10px;border-radius:8px;margin-top:6px;color:#facc15">${d.pix_code||''}</div>
+          <button onclick="navigator.clipboard.writeText('${(d.pix_code or '').replace(chr(39), '')}'); alert('Copiado!')" style="margin-top:8px;width:100%;height:44px;background:#facc15;color:#000;border:none;border-radius:999px;font-weight:800">📋 COPIAR CÓDIGO PIX</button>
+        </div>
+        <div style="background:#0a0e14;border:1px solid #00c950;border-radius:12px;padding:10px;margin-bottom:12px">
+          <div style="font-size:11px;color:#00c950">⏳ Aguardando pagamento...</div>
+          <button onclick="verificarPagamento('${d.order_id or ''}')" style="margin-top:8px;width:100%;height:44px;background:#00c950;color:#fff;border:none;border-radius:999px;font-weight:800">🔄 VERIFICAR PAGAMENTO</button>
+        </div>
+        <button onclick="document.getElementById('pixModal').classList.remove('open')" style="width:100%;height:44px;background:#1f2937;color:#fff;border:1px solid #374151;border-radius:999px">Fechar</button>
+      </div>
+    `;
+    modal.classList.add('open');
+    window.pixOrderId=d.order_id;
+    if(window.pixInterval) clearInterval(window.pixInterval);
+    window.pixInterval=setInterval(()=>verificarPagamento(d.order_id,true),5000);
+  }catch(e){ alert('Erro: '+e.message); }
+}
+async function verificarPagamento(orderId,silent){
+  const t=localStorage.getItem('zp_token');
+  if(!t||!orderId) return;
+  try{
+    const r=await fetch('/api/credits/status?order_id='+orderId,{headers:{Authorization:'Bearer '+t}});
+    const d=await r.json();
+    if(d.status==='pago' || d.status==='pago_teste'){
+      if(window.pixInterval) clearInterval(window.pixInterval);
+      cash=parseFloat(d.cash_zp||cash);
+      upd();
+      alert('✅ PAGO! ZP$ '+d.amount_zp+' creditados! Saldo: ZP$ '+cash);
+      document.getElementById('pixModal').classList.remove('open');
+    }else if(!silent){ alert('Status: '+d.status); }
+  }catch(e){ if(!silent) alert('Erro: '+e.message); }
+}
+
 </script>
 <div class="modal" id="pixModal"><div class="box" style="max-width:480px;width:95%;max-height:95vh;overflow:auto"><div id="pixContent">Carregando Pix...</div></div></div></body>
 </html>
