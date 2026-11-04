@@ -40,7 +40,7 @@ body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;paddin
 <div class="header">
   <div class="logo"><div class="logo-icon">ZP</div><div>ZP<br>AGRO</div><div style="margin-left:6px;color:#00c950;font-size:10px">● AO VIVO</div></div>
   <div style="display:flex;gap:6px">
-    <button class="pill" onclick="document.getElementById('musicaModal').classList.add('open')">MUSICA</button>
+    <button class="pill" onclick="document.getElementById('musicaModal').classList.add('open')">🎵 MÚSICA</button>
     <button class="pill pill-gold" onclick="abrirCredito()">COMPRAR CREDITO</button>
     <button class="pill pill-gold" onclick="location.href='/zbank.html'">ZPEI BANK</button>
     <button class="pill" onclick="openConta()" id="btnConta">MINHA CONTA</button>
@@ -59,7 +59,15 @@ body{background:#05070a;color:#fff;font-family:Inter,system-ui,sans-serif;paddin
 <div class="modal" id="contaModal"><div class="box"><div style="display:flex;justify-content:space-between"><h3>MINHA CONTA</h3><span onclick="this.closest('.modal').classList.remove('open')" style="cursor:pointer">X</span></div><div id="areaLogado" style="display:none"><div style="margin:12px 0;background:#05070a;padding:12px;border-radius:10px"><b id="logadoNome">-</b><br><span id="logadoEmail" style="font-size:11px;color:#9ca3af"></span><br><div style="margin-top:8px">Saldo: <b id="logadoSaldo" style="color:#00c950">ZP$ 0</b></div></div><button onclick="sair()" style="width:100%;height:40px;background:#dc2626;color:#fff;border:none;border-radius:999px">Sair</button></div><div id="areaLogin"><input class="input" id="loginEmail" placeholder="Email"><input class="input" id="loginSenha" type="password" placeholder="Senha"><button style="width:100%;height:44px;background:#00c950;color:#fff;border:none;border-radius:999px;margin-top:8px" onclick="fazerLogin()">ENTRAR</button><button style="width:100%;height:44px;background:#facc15;color:#000;border:none;border-radius:999px;margin-top:8px" onclick="fazerCadastro()">CADASTRAR</button></div></div></div>
 <div class="modal" id="creditoModal"><div class="box"><h3>COMPRAR CREDITO</h3><div id="pacotes">Carregando...</div></div></div>
 <div class="modal" id="pixModal"><div class="box" style="max-width:480px"><div id="pixContent">Carregando Pix...</div></div></div>
-<div class="modal" id="musicaModal"><div class="box"><h3>Musica</h3><button class="btn-w" style="width:100%" onclick="this.closest('.modal').classList.remove('open')">Fechar</button></div></div>
+
+<div class="modal" id="musicaModal"><div class="box" style="text-align:center">
+  <h3>🎵 Música Agro</h3>
+  <p style="font-size:12px;color:#9ca3af;margin:10px 0">Toque para relaxar enquanto opera café!</p>
+  <button id="musicBtn" style="width:100%;height:48px;background:#facc15;color:#000;border:none;border-radius:999px;font-weight:800;font-size:14px;margin:12px 0">▶️ TOCAR MÚSICA</button>
+  <div style="font-size:10px;color:#9ca3af">Volume: 30% • Loop • Agro Lo-fi</div>
+  <button class="btn-w" style="width:100%;margin-top:12px" onclick="this.closest('.modal').classList.remove('open')">Fechar</button>
+</div></div>
+
 
 <script>
 let price=121.5,cash=5000,invested=0,avg=0,lucro=0,current='CAFE';
@@ -144,6 +152,29 @@ async function usarZbank(){ const v=prompt('Quanto puxar?'); if(!v) return; cons
 document.querySelectorAll('.commod').forEach(el=>el.onclick=()=>{document.querySelectorAll('.commod').forEach(c=>c.classList.remove('active'));el.classList.add('active');current=el.dataset.c;upd();});
 setInterval(()=>{ price*=1+(Math.random()-0.5)*0.008; hist.push(price); if(hist.length>50) hist.shift(); draw(); upd(); },2500);
 draw(); upd(); carregarMe();
+
+// Musica - restaura funcao que tocava
+const audio=document.getElementById('audio');
+if(audio){ audio.volume=0.3; }
+const musicBtn=document.getElementById('musicBtn');
+if(musicBtn && audio){
+  musicBtn.onclick=()=>{
+    if(audio.paused){
+      audio.play().then(()=>{ musicBtn.textContent='⏸️ PAUSAR MÚSICA'; musicBtn.style.background='#00c950'; musicBtn.style.color='#fff'; }).catch(()=>alert('Clique novamente para tocar - navegador bloqueou autoplay'));
+    }else{
+      audio.pause();
+      musicBtn.textContent='▶️ TOCAR MÚSICA';
+      musicBtn.style.background='#facc15';
+      musicBtn.style.color='#000';
+    }
+  };
+}
+function toggleMusic(){
+  const m=document.getElementById('musicaModal');
+  if(m) m.classList.add('open');
+}
+
 </script>
+<audio id="audio" loop src="https://pub-87d3a6126e214e4cbbf646b7a0d2ac02.r2.dev/mp3/55acd524-c336-4818-93fc-945ddb49ee2c_ai_music_song_a.mp3"></audio>
 </body>
 </html>
