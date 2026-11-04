@@ -39,7 +39,39 @@ th{background:#0f1419;color:#facc15}
 </head>
 <body>
 <h2>⚙️ ZP Agro - Admin Panel Completo</h2>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0">
+  <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#facc15,#f59e0b);color:#000">
+    <div style="font-size:10px;font-weight:800;letter-spacing:1px">💰 INVESTIMENTO BRUTO</div>
+    <div style="font-size:28px;font-weight:900;margin:8px 0" id="brutoZp">Carregando...</div>
+    <div style="font-size:11px;opacity:.8" id="brutoBrl">R$ 0,00 • 0 Pix</div>
+  </div>
+  <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff">
+    <div style="font-size:10px;font-weight:800;letter-spacing:1px">👛 CARTEIRA USUÁRIOS</div>
+    <div style="font-size:28px;font-weight:900;margin:8px 0" id="carteiraZp">Carregando...</div>
+    <div style="font-size:11px;opacity:.8" id="carteiraBrl">R$ 0,00 • 0 users</div>
+  </div>
+  <div style="border-radius:20px;padding:20px;background:linear-gradient(135deg,#00c950,#059669);color:#fff">
+    <div style="font-size:10px;font-weight:800;letter-spacing:1px">📈 LUCRO DA PLATAFORMA</div>
+    <div style="font-size:28px;font-weight:900;margin:8px 0" id="lucroZp">Carregando...</div>
+    <div style="font-size:11px;opacity:.8" id="lucroBrl">R$ 0,00 • Lucro</div>
+  </div>
+</div>
+<script>
+async function carregarDashboard(){
+  try{
+    const r=await fetch('/api/admin/dashboard');
+    const d=await r.json();
+    document.getElementById('brutoZp').textContent='ZP$ '+d.investimento_bruto.zp.toLocaleString('pt-BR');
+    document.getElementById('brutoBrl').textContent='R$ '+d.investimento_bruto.brl.toLocaleString('pt-BR',{minimumFractionDigits:2})+' • '+d.investimento_bruto.qtd_pix+' Pix';
+    document.getElementById('carteiraZp').textContent='ZP$ '+d.carteira_usuarios.zp.toLocaleString('pt-BR');
+    document.getElementById('carteiraBrl').textContent='R$ '+d.carteira_usuarios.brl.toLocaleString('pt-BR',{minimumFractionDigits:2})+' • '+d.carteira_usuarios.total_users+' users';
+    document.getElementById('lucroZp').textContent='ZP$ '+d.lucro_plataforma.zp.toLocaleString('pt-BR');
+    document.getElementById('lucroBrl').textContent='R$ '+d.lucro_plataforma.brl.toLocaleString('pt-BR',{minimumFractionDigits:2})+' • Lucro';
+  }catch(e){ console.log('Erro dashboard',e); }
+}
+carregarDashboard();
+</script>
+ <div style="display:flex;gap:8px;flex-wrap:wrap">
   <div class="card" style="flex:1;min-width:160px"><div>Usuários</div><b id="statUsers">-</b></div>
   <div class="card" style="flex:1;min-width:160px"><div>Trades</div><b id="statTrades">-</b></div>
   <div class="card" style="flex:1;min-width:160px"><div>Saques Pendentes</div><b id="statPend">-</b></div>
