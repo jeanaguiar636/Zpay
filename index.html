@@ -210,22 +210,29 @@ function addFeed(commodity, type, price){
 const PRICES={CAFÉ:121.97,FEIJÃO:182.65,ARROZ:95.70,TRIGO:87.30,MILHO:72.40};
 let sel='CAFÉ';let cash=5000,invest=0,sacas=0,avg=0,now=PRICES[sel];
 function upd(){
-  document.getElementById('saldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('carteiraZP').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('carteiraBRL').textContent='R$ '+(cash*0.01).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('saqueSaldo').textContent='ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2})+' = R$ '+(cash*0.01).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('subSaldo').textContent='Carteira ZP Agro • saque instantâneo PIX • '+sel;
-  document.getElementById('lucroAtivo').textContent=sel;
-  document.getElementById('investido').innerHTML='INVESTIDO<br>'+sacas+' sacas • Comprado por ZP$ '+avg.toFixed(2)+' • '+sel;
+  const set = (id, txt)=>{ const el=document.getElementById(id); if(el) el.textContent=txt; };
+  const setHTML = (id, html)=>{ const el=document.getElementById(id); if(el) el.innerHTML=html; };
+  set('saldo','ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('carteiraZP','ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('carteiraBRL','R$ '+(cash*0.01).toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('saqueSaldo','ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2})+' = R$ '+(cash*0.01).toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('walletZPModal','ZP$ '+cash.toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('walletBRLModal','R$ '+(cash*0.01).toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('subSaldo','Carteira ZP Agro • '+sel);
+  set('lucroAtivo',sel);
+  setHTML('investido','INVESTIDO<br>'+sacas+' sacas • Comprado por ZP$ '+avg.toFixed(2)+' • '+sel);
   const lucro=sacas>0?(now-avg)*sacas:0;
   const lucroEl=document.getElementById('lucro');
-  lucroEl.textContent=(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2).replace('.',',');
-  lucroEl.style.color=lucro>=0?'#00c950':'#ef4444';
-  document.getElementById('precoTop').textContent='ZP$ '+now.toFixed(2);
-  document.getElementById('buyBtn').innerHTML='COMPRAR '+sel+'<br><span style="font-size:11px;opacity:.9">ZP$ '+now.toFixed(2)+' • Qty 1 • fee ZP$ 0.48</span>';
-  document.getElementById('sellBtn').innerHTML='VENDER '+sel+'<br><span style="font-size:11px;opacity:.9">ZP$ '+now.toFixed(2)+' • Qty 1 • fee ZP$ 0.48</span>';
-  document.getElementById('contaAtivo').textContent=sel;
+  if(lucroEl){ lucroEl.textContent=(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2).replace('.',','); lucroEl.style.color=lucro>=0?'#00c950':'#ef4444'; }
+  set('precoTop','ZP$ '+now.toFixed(2));
+  setHTML('buyBtn','COMPRAR '+sel+'<br><span style="font-size:11px;opacity:.9">ZP$ '+now.toFixed(2)+' • Qty 1 • fee ZP$ 0.48</span>');
+  setHTML('sellBtn','VENDER '+sel+'<br><span style="font-size:11px;opacity:.9">ZP$ '+now.toFixed(2)+' • Qty 1 • fee ZP$ 0.48</span>');
+  set('contaAtivo',sel);
+  set('investidoModal','ZP$ '+ (sacas*avg).toLocaleString('pt-BR',{minimumFractionDigits:2}));
+  set('lucroModal',(lucro>=0?'+':'')+'ZP$ '+lucro.toFixed(2));
+  set('sacasModal', String(sacas));
 }
+
 document.getElementById('menu').addEventListener('click',e=>{
   if(e.target.tagName==='BUTTON'){
     document.querySelectorAll('#menu button').forEach(b=>b.classList.remove('active'));
@@ -289,22 +296,46 @@ const audio=document.getElementById('audio');audio.volume=0.3;document.getElemen
 // BANCO
 async function carregarDoBanco(){
   const t=localStorage.getItem('zp_token'); if(!t) return;
-  try{const r=await fetch('/api/auth/me',{headers:{Authorization:'Bearer '+t}});const d=await r.json();const rc=d?.portfolio?.cash_zp??d?.cash_zp;if(rc!=null){cash=rc;upd();} const email=d?.user?.email||d?.email||''; const user=d?.user?.username||email.split('@')[0]; if(user){ document.getElementById('nomeUsuario').textContent=user; document.getElementById('emailUsuario').textContent=email; document.getElementById('saldoD1').textContent='ZP$ '+cash.toLocaleString('pt-BR'); document.getElementById('userTop').textContent=user+' • ZP$ '+cash; document.getElementById('tokenShort').textContent=t.slice(0,12)+'...'; document.getElementById('areaLogado').style.display='block'; document.getElementById('areaDeslogado').style.display='none'; document.getElementById('minhaContaBtn').textContent='👤 '+user; }}catch(e){console.log(e)}
+  try{
+    const r=await fetch('/api/auth/me',{headers:{Authorization:'Bearer '+t}});
+    const d=await r.json();
+    if(!r.ok) { console.log('me falhou', d); return; }
+    const rc=d?.portfolio?.cash_zp??d?.cash_zp;
+    if(rc!=null){ cash=rc; upd(); }
+    const email=d?.user?.email||d?.email||'';
+    const user=d?.user?.username||email.split('@')[0]||'';
+    if(user){ 
+      const set=(id,txt)=>{const el=document.getElementById(id); if(el) el.textContent=txt;};
+      set('nomeUsuario',user); set('emailUsuario',email); set('saldoD1','ZP$ '+cash.toLocaleString('pt-BR')); set('userTop',user+' • ZP$ '+cash); set('tokenShort',t.slice(0,12)+'...');
+      const btn=document.getElementById('minhaContaBtn'); if(btn) btn.textContent='👤 '+user;
+      const areaL=document.getElementById('areaLogado'); if(areaL) areaL.style.display='block';
+      const areaD=document.getElementById('areaDeslogado'); if(areaD) areaD.style.display='none';
+    }
+  }catch(e){console.log('carregarDoBanco erro',e)}
 }
+
 async function salvarNoBanco(comm,type,price){
   const t=localStorage.getItem('zp_token'); if(!t) return;
   try{const r=await fetch('/api/trades',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({commodity:comm,type,qty:1,price})});const d=await r.json();if(d.cash_zp!=null){cash=d.cash_zp;upd();}}catch(e){}
 }
 async function cadastrar(){
-  const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value, nome=document.getElementById('loginNome').value||email.split('@')[0];
+  const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value, nome=document.getElementById('loginNome')?.value||email.split('@')[0];
   if(!email||!pass) return alert('Email e senha');
   try{
     const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:nome,email,password:pass})});
     const d=await r.json();
-    if(d.token){ localStorage.setItem('zp_token',d.token); await carregarDoBanco(); alert('Conta criada '+nome+'! Bônus ZP$ '+d.bonus+'!'); document.getElementById('contaModal').classList.remove('open'); }
+    if(d.token){ 
+      localStorage.setItem('zp_token',d.token); 
+      await carregarDoBanco(); 
+      const areaL=document.getElementById('areaLogado'); if(areaL) areaL.style.display='block';
+      const areaD=document.getElementById('areaDeslogado'); if(areaD) areaD.style.display='none';
+      alert('Conta criada '+nome+'! Bônus ZP$ '+d.bonus+'!'); 
+      document.getElementById('contaModal').classList.add('open');
+    }
     else alert(d.error||'Erro cadastro');
   }catch(e){alert(e.message)}
 }
+
 async function login(){
   const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value;
   if(!email||!pass) return alert('Email e senha');
@@ -313,17 +344,25 @@ async function login(){
     const d=await r.json();
     if(r.ok && d.token){
       localStorage.setItem('zp_token',d.token);
+      // Atualiza tela SEM reload
       await carregarDoBanco();
+      // Garante que área logada aparece
+      const areaL=document.getElementById('areaLogado'); if(areaL) areaL.style.display='block';
+      const areaD=document.getElementById('areaDeslogado'); if(areaD) areaD.style.display='none';
+      const userTop=document.getElementById('userTop'); if(userTop) userTop.textContent=(d.user?.username||email)+' • ZP$ '+cash;
+      const btn=document.getElementById('minhaContaBtn'); if(btn) btn.textContent='👤 '+(d.user?.username||email);
+      // Mantém modal aberto mostrando MINHA CONTA logada - usuário vê que entrou!
+      // Fecha e reabre pra mostrar área logada
+      document.getElementById('contaModal').classList.add('open');
       alert('Logado! Bem-vindo '+(d.user?.username||email)+'! Saldo: ZP$ '+cash);
-      document.getElementById('contaModal').classList.remove('open');
-      location.reload();
     } else {
       alert(d.error||'Erro login');
     }
   }catch(e){alert('Erro: '+e.message)}
 }
 
-function logout(){ localStorage.removeItem('zp_token'); location.reload(); }
+
+function logout(){ localStorage.removeItem('zp_token'); cash=5000; upd(); const areaL=document.getElementById('areaLogado'); if(areaL) areaL.style.display='none'; const areaD=document.getElementById('areaDeslogado'); if(areaD) areaD.style.display='block'; const btn=document.getElementById('minhaContaBtn'); if(btn) btn.textContent='👤 MINHA CONTA'; const ut=document.getElementById('userTop'); if(ut) ut.textContent='Não logado'; alert('Saiu! Saldo ficou no banco D1'); }
 async function pedirSaque(){ alert("Formulário de saque via Pix removido"); return; }
 
 async function comprarCredito(zp, brl){
