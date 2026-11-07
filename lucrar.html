@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Como Lucrar com o AgroPay - Treine e Ganhe R$20 a R$20.000/mês</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05070a;color:#fff;font-family:'Space Grotesk',sans-serif;padding:0 0 100px 0}
+.header{position:sticky;top:0;z-index:30;background:#0a0e14;border-bottom:1px solid #1f2937;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:900;font-size:18px}.logo span{color:#facc15}
+.btn{border:none;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:12px}
+.btn-gold{background:#facc15;color:#000}.btn-green{background:#00c950;color:#fff}.btn-dark{background:#1f2937;color:#fff;border:1px solid #374151}
+.play-float{position:fixed;top:70px;right:12px;z-index:99;background:#facc15;color:#000;border:none;border-radius:999px;padding:12px 18px;font-weight:900;font-size:13px;box-shadow:0 0 20px rgba(250,204,21,0.5);cursor:pointer;display:flex;align-items:center;gap:8px}
+.play-float.playing{background:#dc2626;color:#fff}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+.hero{background:linear-gradient(135deg,#0a0e14,#1a1a00);border:2px solid #facc15;border-radius:16px;padding:20px;margin:14px 0;text-align:center}
+.hero h1{font-size:28px;line-height:1.1}.hero h1 span{color:#facc15}
+.hero p{color:#9ca3af;font-size:13px;margin:10px 0;line-height:1.5}
+.card{background:#0a0e14;border:1px solid #1f2937;border-radius:16px;padding:18px;margin:12px 0}
+.card h2{font-size:18px;margin-bottom:8px;color:#facc15}
+.card h3{font-size:15px;margin:12px 0 6px}
+.card p, .card li{font-size:13px;color:#d1d5db;line-height:1.7}
+.card ul{padding-left:18px}
+.badge{display:inline-block;background:#00c950;color:#fff;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:900}
+.badge-yellow{background:#facc15;color:#000}
+.table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+.table th{background:#1f2937;padding:10px;text-align:left}
+.table td{padding:10px;border-bottom:1px solid #1f2937}
+.table tr:last-child td{border:none}
+.highlight{background:linear-gradient(135deg,#052e16,#0a0e14);border:2px solid #00c950;border-radius:16px;padding:18px;margin:12px 0}
+.cta{background:linear-gradient(135deg,#00c950,#059669);border-radius:16px;padding:22px;margin:16px 0;text-align:center}
+.cta h2{font-size:22px;line-height:1.2}
+.cta p{font-size:13px;opacity:.9;margin:10px 0;line-height:1.6}
+.btn-big{width:100%;height:52px;border-radius:12px;border:none;font-weight:900;font-size:15px;cursor:pointer;margin:6px 0}
+.progress{height:6px;background:#1f2937;border-radius:999px;overflow:hidden;margin:10px 0}
+.progress div{height:100%;background:#facc15;width:0%;transition:width .3s}
+.voice-status{position:fixed;bottom:0;left:0;right:0;background:#0a0e14;border-top:1px solid #facc15;padding:10px 14px;display:none;z-index:99}
+.voice-status.show{display:block}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">ZP <span>AGRO</span> <span style="font-size:10px;color:#00c950">● AO VIVO</span></div>
+  <div style="display:flex;gap:6px">
+    <button class="btn btn-dark" onclick="location.href='/'">⬅ Trading</button>
+    <button class="btn btn-gold" onclick="location.href='/planos.html'">⭐ Planos</button>
+  </div>
+</div>
+
+<button id="playBtn" class="play-float" onclick="toggleNarration()">▶️ OUVIR EXPLICAÇÃO</button>
+
+<div class="wrap" id="conteudoParaLer">
+
+<div class="hero">
+  <div class="badge">🎮 TREINAMENTO DE TRADE • JOGO EDUCACIONAL</div>
+  <h1 style="margin:12px 0">Como Lucrar com o <span>AgroPay</span><br>Treine. Aprenda. Indique. Ganhe.</h1>
+  <p>AgroPay não é promessa de investimento. É uma <b style="color:#fff">plataforma de treinamento de trade</b> onde você aprende a operar as oscilações das commodities — café, milho, feijão, arroz, trigo — num ambiente simulado, automatizado com IA, sem arriscar dinheiro real no mercado.</p>
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <button class="btn btn-gold" style="flex:1;height:44px" onclick="toggleNarration()">▶️ Ouvir tudo em áudio</button>
+    <button class="btn btn-green" style="flex:1;height:44px" onclick="location.href='/planos.html'">⭐ Ver Planos</button>
+  </div>
+  <div style="font-size:11px;color:#9ca3af;margin-top:8px">🔊 Aperte o play no canto: a voz explica e a música do AgroPay toca bem baixinha de fundo.</div>
+</div>
+
+<div class="card" data-falar="true">
+  <h2>1. O que é o AgroPay?</h2>
+  <p>O AgroPay é um <b>simulador de trade de commodities</b>. Você usa a plataforma para <b>treinar</b>, para <b>aprender a ganhar dinheiro com trade</b>, para entender como o preço do café sobe e desce, como o milho oscila, como o mercado reage.</p>
+  <p style="margin-top:8px">Você começa com <b style="color:#facc15">ZP$ 500 de bônus</b> — a moeda do site — e vai comprando e vendendo sacas. Se errar, não perde dinheiro real. Se acertar, aprende o padrão. Quem treina aqui, conhece o mercado, sabe operar, e começa a operar no automático, porque tudo é automatizado com IA.</p>
+  <ul style="margin-top:8px">
+    <li>✅ Treine sem risco: ZP$ é moeda fictícia do jogo</li>
+    <li>✅ Aprenda oscilações reais das commodities</li>
+    <li>✅ IA mostra tendência, risco, hora de comprar e vender</li>
+    <li>✅ Quando você aprende, você leva esse conhecimento pro mercado real — fora daqui — com mais segurança</li>
+  </ul>
+</div>
+
+<div class="card" data-falar="true">
+  <h2>2. Como eu ganho dinheiro COM o AgroPay?</h2>
+  <p>Tem 2 jeitos de usar o AgroPay:</p>
+  <h3>🆓 Jeito 1: Só treinar (Grátis)</h3>
+  <p>Você pode usar a plataforma normal, de graça, só para treinar. Cadastra grátis, ganha ZP$ 500, trada, aprende. Sem pagar nada. Sem ganhar renda. É só aprendizado.</p>
+  <h3>💰 Jeito 2: Treinar + Ganhar Renda (Premium + Afiliados)</h3>
+  <p>Se você <b>quiser ganhar dinheiro com a plataforma</b>, você faz o upgrade. Você paga <b style="color:#facc15">R$ 39 por mês</b> pela licença Premium de treinamento, e aí você pode <b>indicar pessoas</b> — colocar filiados, colocar indicados dentro do AgroPay.</p>
+  <p style="margin-top:8px">Cada pessoa que você indica e que assina o Premium, <b style="color:#00c950">você ganha R$ 20 todo mês</b>, enquanto ela continuar assinando. Os outros <b>R$ 19 ficam para a plataforma</b> manter servidores, IA, suporte e evolução.</p>
+</div>
+
+<div class="highlight" data-falar="true">
+  <h2 style="color:#00c950">💡 A conta é simples: R$ 39 = R$ 20 pra você + R$ 19 pra plataforma</h2>
+  <table class="table">
+    <tr><th>Quem paga</th><th>Você ganha</th><th>Plataforma fica</th></tr>
+    <tr><td>Seu indicado paga R$ 39/mês</td><td><b style="color:#00c950">R$ 20 / mês</b></td><td>R$ 19 / mês</td></tr>
+    <tr><td>Você paga R$ 39/mês</td><td colspan="2" style="color:#9ca3af">Você tem acesso Premium + direito de indicar</td></tr>
+  </table>
+  <p style="font-size:12px;color:#9ca3af">Você paga R$ 39 para usar o Premium e ter direito de indicar. Você não ganha por indicar a si mesmo. Você ganha pelos indicados que pagam.</p>
+</div>
+
+<div class="card" data-falar="true">
+  <h2>3. Quanto dá pra ganhar indicando?</h2>
+  <p>É renda recorrente. Não é só uma vez. Enquanto seu indicado continuar treinando no Premium, você continua ganhando.</p>
+  <table class="table">
+    <tr><th>Indicados ativos</th><th>Você ganha / mês</th><th>Você ganha / ano</th></tr>
+    <tr><td>1 indicado</td><td>R$ 20</td><td>R$ 240</td></tr>
+    <tr><td>5 indicados</td><td>R$ 100</td><td>R$ 1.200</td></tr>
+    <tr><td>10 indicados</td><td>R$ 200</td><td>R$ 2.400</td></tr>
+    <tr><td>25 indicados</td><td>R$ 500</td><td>R$ 6.000</td></tr>
+    <tr><td>50 indicados</td><td>R$ 1.000</td><td>R$ 12.000</td></tr>
+    <tr><td>100 indicados</td><td><b style="color:#00c950">R$ 2.000</b></td><td>R$ 24.000</td></tr>
+    <tr><td>500 indicados</td><td><b style="color:#facc15">R$ 10.000</b></td><td>R$ 120.000</td></tr>
+    <tr><td>1.000 indicados</td><td><b style="color:#facc15">R$ 20.000 / mês</b></td><td>R$ 240.000</td></tr>
+  </table>
+  <p>De <b>R$ 20 a R$ 20.000 por mês</b> — depende de quantas pessoas você ajuda a aprender. Não tem limite. Quanto mais gente você coloca pra treinar, mais você ganha. E seu indicado também pode indicar, e ganhar também. Todo mundo aprende, todo mundo ganha.</p>
+</div>
+
+<div class="card" data-falar="true">
+  <h2>4. Por que o mercado de commodities é tão lucrativo?</h2>
+  <p>O Brasil é o maior produtor de café, milho, soja, açúcar do mundo. O preço dessas commodities <b>oscila todo dia</b> — por clima, dólar, safra, guerra, demanda da China. Essa oscilação é o que o trader aprende a ler.</p>
+  <p style="margin-top:8px">Quem sabe operar oscilação, sabe onde tem oportunidade. Quem não sabe, perde. Por isso treinar antes é a virada de chave. Aqui no AgroPay você treina com IA, no automático, vendo na tela: preço subindo, preço descendo, hora de comprar, hora de vender, sem quebrar no mercado real.</p>
+  <p style="margin-top:8px">Quem treina aqui, conhece aqui, sabe operar. E quando aprende a operar, pode transformar isso na <b>fonte de renda principal dele</b> — seja operando de verdade fora daqui, seja indicando outras pessoas para aprenderem também e ganhando recorrente.</p>
+</div>
+
+<div class="card" data-falar="true">
+  <h2>5. O que eu ganho no Premium R$ 39?</h2>
+  <ul>
+    <li>✅ ZP$ 5.000 todo mês de bônus Premium pra treinar mais</li>
+    <li>✅ Indicadores avançados + análise de risco com IA</li>
+    <li>✅ Salas de treinamento ao vivo</li>
+    <li>✅ Direito de indicar e ganhar R$ 20 por indicado / mês</li>
+    <li>✅ Seu link de afiliado na carteira — copia e cola no WhatsApp</li>
+    <li>✅ Certificado de conclusão de treinamento</li>
+    <li>✅ Suporte prioritário</li>
+  </ul>
+  <p style="margin-top:8px">Grátis você só treina. Premium você treina + pode ganhar. A escolha é sua.</p>
+</div>
+
+<div class="cta" data-falar="true">
+  <div class="badge" style="background:#fff;color:#059669">🔥 CHAMADA PARA AÇÃO — SUA VIRADA DE CHAVE</div>
+  <h2 style="margin:12px 0">Quer só treinar?<br>Ou quer treinar E fazer renda de R$ 20 a R$ 20.000 por mês?</h2>
+  <p>Você já entendeu: AgroPay é treinamento. Você aprende a operar as oscilações das commodities, o mercado mais lucrativo do Brasil, com IA, no automático, sem risco. Se você só quer aprender, cadastra grátis e começa agora.</p>
+  <p><b>Mas se você quer transformar isso na sua fonte de renda principal</b> — treinar, aprender, e indicar outras pessoas para aprenderem também — então faz o upgrade agora. Paga R$ 39, indica pessoas, ganha R$ 20 por cada uma, todo mês. É simples, é recorrente, é a sua virada de chave.</p>
+  <p>Não espera o preço subir, não espera o mercado te deixar pra trás. Quem começa hoje, indica hoje, ganha mês que vem. Quem espera, fica só assistindo os outros ganharem.</p>
+  <button class="btn-big" style="background:#fff;color:#059669" onclick="location.href='/planos.html'">✅ QUERO FAZER UPGRADE R$ 39 E GANHAR R$ 20 POR INDICADO →</button>
+  <button class="btn-big" style="background:#facc15;color:#000" onclick="location.href='/planos.html'">🆓 QUERO CADASTRAR GRÁTIS E COMEÇAR A TREINAR →</button>
+  <div style="font-size:11px;opacity:.8;margin-top:8px">🎮 Jogo educacional de simulação. Você paga pela licença de uso do software de treinamento. Sem promessa de lucro no trade. Sua renda vem de indicar pessoas para a licença Premium.</div>
+</div>
+
+</div>
+
+<audio id="bgMusic" loop src="https://pub-87d3a6126e214e4cbbf646b7a0d2ac02.r2.dev/mp3/55acd524-c336-4818-93fc-945ddb49ee2c_ai_music_song_a.mp3"></audio>
+
+<div class="voice-status" id="voiceStatus">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div><b>🔊 Ouvindo explicação...</b> <span id="voiceTexto" style="color:#9ca3af;font-size:12px">Música bem baixinha de fundo</span></div>
+    <button onclick="pararNarration()" style="background:#dc2626;color:#fff;border:none;border-radius:999px;padding:6px 12px;font-weight:800;cursor:pointer">⏹ Parar</button>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+</div>
+
+<script>
+const bgMusic = document.getElementById('bgMusic');
+bgMusic.volume = 0.05; // bem baixinha!
+let falando = false;
+let utteranceAtual = null;
+let partes = [];
+let idxAtual = 0;
+
+function coletarTexto(){
+  const els = document.querySelectorAll('[data-falar="true"]');
+  let textos = [];
+  els.forEach(el=>{
+    let t = el.innerText.replace(/\n+/g,'. ').replace(/\s+/g,' ').trim();
+    if(t) textos.push(t);
+  });
+  // Adiciona hero
+  const hero = document.querySelector('.hero p');
+  if(hero) textos.unshift(hero.innerText);
+  return textos;
+}
+
+function toggleNarration(){
+  if(falando){ pararNarration(); return; }
+  partes = coletarTexto();
+  idxAtual = 0;
+  falando = true;
+  document.getElementById('playBtn').textContent = '⏹ PARAR ÁUDIO';
+  document.getElementById('playBtn').classList.add('playing');
+  document.getElementById('voiceStatus').classList.add('show');
+  // Toca música bem baixinha de fundo
+  bgMusic.volume = 0.05;
+  bgMusic.play().catch(()=>{});
+  falarProxima();
+}
+
+function falarProxima(){
+  if(!falando || idxAtual >= partes.length){
+    pararNarration();
+    document.getElementById('voiceTexto').textContent = '✅ Explicação terminada! Agora clica no botão verde e faz upgrade!';
+    return;
+  }
+  const texto = partes[idxAtual];
+  document.getElementById('voiceTexto').textContent = texto.substring(0,90)+'...';
+  document.getElementById('progressBar').style.width = Math.round((idxAtual/partes.length)*100)+'%';
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = 'pt-BR';
+  u.rate = 1.0;
+  u.pitch = 1.0;
+  // Enquanto fala, mantém música bem baixa
+  u.onstart = ()=>{ bgMusic.volume = 0.05; };
+  u.onend = ()=>{ idxAtual++; if(falando) falarProxima(); };
+  u.onerror = ()=>{ idxAtual++; if(falando) falarProxima(); };
+  utteranceAtual = u;
+  window.speechSynthesis.speak(u);
+}
+
+function pararNarration(){
+  falando = false;
+  window.speechSynthesis.cancel();
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+  document.getElementById('playBtn').textContent = '▶️ OUVIR EXPLICAÇÃO';
+  document.getElementById('playBtn').classList.remove('playing');
+  document.getElementById('voiceStatus').classList.remove('show');
+  document.getElementById('progressBar').style.width = '0%';
+}
+
+// Se usuário clicar no play de novo, já toca música baixinho + voz
+// Sim, é possível! A música do AgroPay toca a 5% de volume enquanto o navegador fala!
+</script>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
