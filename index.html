@@ -137,14 +137,30 @@ body{background:#05070a;color:#fff;font-family:'Space Grotesk',sans-serif;min-he
   <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="color:#facc15">💼 CARTEIRA</h3><button onclick="this.closest('.modal').classList.remove('open')" style="background:none;border:none;color:#9ca3af;font-size:20px;cursor:pointer">✕</button></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0">
     <div style="background:linear-gradient(135deg,#00c950,#16a34a);border-radius:12px;padding:14px;color:#fff">
-      <div style="font-size:10px;opacity:.8">SALDO ZP$</div>
-      <div style="font-size:22px;font-weight:900" id="walletZPModal">ZP$ 5.000,00</div>
+      <div style="font-size:10px;opacity:.8">💰 SALDO ZP$ - MOEDA DO SITE</div>
+      <div style="font-size:24px;font-weight:900" id="walletZPModal">ZP$ 5.000,00</div>
+      <div style="font-size:10px;opacity:.8">Pra tradar CAFÉ, MILHO, etc</div>
     </div>
     <div style="background:#facc15;border-radius:12px;padding:14px;color:#000">
-      <div style="font-size:10px;opacity:.7">REAIS R$</div>
-      <div style="font-size:22px;font-weight:900" id="walletBRLModal">R$ 50,00</div>
+      <div style="font-size:10px;opacity:.7">💵 REAIS R$ - VALOR DO ZP$</div>
+      <div style="font-size:24px;font-weight:900" id="walletBRLModal">R$ 50,00</div>
       <div style="font-size:10px">1 ZP$ = R$ 0,01</div>
     </div>
+  </div>
+  <div style="background:linear-gradient(135deg,#00c950,#059669);border:2px solid #00c950;border-radius:12px;padding:14px;color:#fff;margin:10px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:10px;opacity:.9">🤝 SALDO EM REAIS COMO AFILIADO</div>
+        <div style="font-size:28px;font-weight:900" id="saldoAfiliadoReais">R$ 0,00</div>
+        <div style="font-size:11px;opacity:.9">Você ganha <b>R$ 20</b> por cada amigo Premium / mês</div>
+      </div>
+      <div style="font-size:36px">💸</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;font-size:11px">
+      <div style="flex:1;background:rgba(0,0,0,.25);border-radius:8px;padding:8px;text-align:center"><div id="afiliadoTotalIndicados2" style="font-weight:900">0</div><div style="font-size:9px;opacity:.8">Indicados</div></div>
+      <div style="flex:1;background:rgba(0,0,0,.25);border-radius:8px;padding:8px;text-align:center"><div id="afiliadoProjecao2" style="font-weight:900">R$ 0 /mês</div><div style="font-size:9px;opacity:.8">Próximo mês</div></div>
+    </div>
+    <div style="font-size:10px;color:#d1fae5;margin-top:8px;text-align:center">💡 Esse é dinheiro REAL de afiliado, diferente do ZP$ do jogo!</div>
   </div>
   <div style="background:#05070a;border:1px solid #1f2937;border-radius:10px;padding:12px;margin:10px 0">
     <div style="font-size:12px;font-weight:700;margin-bottom:6px">📊 Seu desempenho</div>
@@ -481,6 +497,10 @@ async function pegarLinkAfiliadoCarteira(){
     const d2 = await r2.json();
     if(d2.code){
       document.getElementById('afiliadoGanho').textContent = 'R$ '+(d2.total_earned||0).toFixed(2);
+      const sAff = document.getElementById('saldoAfiliadoReais'); if(sAff) sAff.textContent='R$ '+(d2.total_earned||0).toFixed(2).replace('.',',');
+      const saldoAff = document.getElementById('saldoAfiliadoReais'); if(saldoAff) saldoAff.textContent = 'R$ '+(d2.total_earned||0).toFixed(2).replace('.',',');
+      const ind2 = document.getElementById('afiliadoTotalIndicados2'); if(ind2) ind2.textContent = d2.total_referrals||0;
+      const proj2 = document.getElementById('afiliadoProjecao2'); if(proj2) proj2.textContent = 'R$ '+((d2.total_referrals||0)*20)+' /mês';
       document.getElementById('afiliadoIndicados').textContent = d2.total_referrals||0;
       document.getElementById('afiliadoProjecao').textContent = 'R$ '+((d2.total_referrals||0)*20);
     }
@@ -507,6 +527,9 @@ async function carregarLinkCarteiraAuto(){
       const btn = document.getElementById('btnPegarLink');
       if(btn){ btn.textContent='✅ SEU LINK JÁ ESTÁ PRONTO!'; btn.style.background='#00c950'; btn.style.color='#fff'; }
       const elG = document.getElementById('afiliadoGanho'); if(elG) elG.textContent='R$ '+(d.total_earned||0).toFixed(2);
+      const saldoAff2 = document.getElementById('saldoAfiliadoReais'); if(saldoAff2) saldoAff2.textContent='R$ '+(d.total_earned||0).toFixed(2).replace('.',',');
+      const ind2b = document.getElementById('afiliadoTotalIndicados2'); if(ind2b) ind2b.textContent=d.total_referrals||0;
+      const proj2b = document.getElementById('afiliadoProjecao2'); if(proj2b) proj2b.textContent='R$ '+((d.total_referrals||0)*20)+' /mês';
       const elI = document.getElementById('afiliadoIndicados'); if(elI) elI.textContent=d.total_referrals||0;
       const elP = document.getElementById('afiliadoProjecao'); if(elP) elP.textContent='R$ '+((d.total_referrals||0)*20);
     }
