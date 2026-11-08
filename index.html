@@ -326,7 +326,73 @@ function pararNegociacao(){
 }
 
 // Musica
-const audio=document.getElementById('audio');audio.volume=0.3;document.getElementById('musicBtn').onclick=()=>{if(audio.paused) audio.play(); else audio.pause();};
+
+// ===== MÚSICA: COMEÇA BAIXA E VAI AUMENTANDO AOS POUCOS + BOTÃO VERDE QUANDO TOCA =====
+const audio=document.getElementById('audio');
+const musicBtn=document.getElementById('musicBtn');
+const barsEl=document.getElementById('bars');
+const COR_ORIGINAL_BTN = '#1f2937'; // cor que era (btn-dark)
+let fadeInterval = null;
+let musicaJaIniciou = false;
+
+function atualizarBotaoMusica(){
+  if(!audio.paused){
+    // TOCANDO -> VERDE
+    musicBtn.style.background = '#00c950';
+    musicBtn.style.color = '#fff';
+    musicBtn.style.borderColor = '#00c950';
+    musicBtn.innerHTML = '🔊 TOCANDO <span id="bars" style="display:inline-flex;gap:2px"><span style="width:3px;height:6px;background:#fff;display:inline-block"></span><span style="width:3px;height:10px;background:#fff;display:inline-block"></span><span style="width:3px;height:7px;background:#fff;display:inline-block"></span></span>';
+  } else {
+    // PARADA -> VOLTA A COR QUE ERA
+    musicBtn.style.background = COR_ORIGINAL_BTN;
+    musicBtn.style.color = '#fff';
+    musicBtn.style.borderColor = '#374151';
+    musicBtn.innerHTML = '🔊 MÚSICA <span id="bars" style="display:inline-flex;gap:2px"><span style="width:3px;height:6px;background:#facc15;display:inline-block"></span><span style="width:3px;height:10px;background:#facc15;display:inline-block"></span><span style="width:3px;height:7px;background:#facc15;display:inline-block"></span></span>';
+  }
+}
+
+function fadeInMusica(){
+  if(fadeInterval) clearInterval(fadeInterval);
+  audio.volume = 0.02; // começa BEM BAIXA
+  fadeInterval = setInterval(()=>{
+    if(audio.volume < 0.30){
+      audio.volume = Math.min(0.30, audio.volume + 0.02); // aumenta aos poucos
+    } else {
+      clearInterval(fadeInterval);
+    }
+  }, 500); // a cada 0.5s aumenta um pouquinho -> leva ~7 segundos pra chegar no volume normal
+}
+
+async function iniciarMusica(){
+  if(musicaJaIniciou && !audio.paused) return;
+  try{
+    await audio.play();
+    musicaJaIniciou = true;
+    if(audio.volume > 0.05) audio.volume = 0.02; // garante que começa baixa se for primeira vez
+    fadeInMusica();
+  }catch(e){
+    // Navegador bloqueou autoplay - espera primeiro toque
+    console.log('Autoplay bloqueado, esperando toque');
+  }
+  atualizarBotaoMusica();
+}
+
+// 1) Tenta iniciar sozinho quando entrar no AgroPay
+window.addEventListener('load', ()=>{ setTimeout(iniciarMusica, 500); });
+// 2) Se o navegador bloquear, inicia no primeiro toque em qualquer lugar da tela
+document.addEventListener('click', ()=>{ if(!musicaJaIniciou) iniciarMusica(); }, {once:true});
+document.addEventListener('touchstart', ()=>{ if(!musicaJaIniciou) iniciarMusica(); }, {once:true});
+
+// 3) Botão: toca / pausa e muda cor
+musicBtn.onclick = async ()=>{
+  if(audio.paused){ await audio.play(); fadeInMusica(); }
+  else { audio.pause(); if(fadeInterval) clearInterval(fadeInterval); }
+  atualizarBotaoMusica();
+};
+audio.addEventListener('play', atualizarBotaoMusica);
+audio.addEventListener('pause', atualizarBotaoMusica);
+audio.addEventListener('ended', atualizarBotaoMusica);
+
 // BANCO
 async function carregarDoBanco(){
   const t=localStorage.getItem('zp_token'); if(!t) return;
